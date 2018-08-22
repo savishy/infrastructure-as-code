@@ -8,6 +8,7 @@ Tasks achieved:
 1. Creation of a fully-parameterized Linux VM.
 1. Addition of VM to Ansible dynamic inventory.
 1. Provisioning Java and Jenkins on VM.
+1. Installing Docker.
 
 
 ## Highlights
@@ -19,6 +20,7 @@ Tasks achieved:
   * savishy/ansible-roles
   * geerlingguy/ansible-role-java
   * geerlingguy/ansible-role-jenkins
+  * geerlingguy/ansible-role-docker
 
 * No static inventory, and no dynamic inventory scripts are necessary - specifically I utilize the great [`add_host`](https://docs.ansible.com/ansible/latest/modules/add_host_module.html) functionality of Ansible to add the host to Ansible's dynamic inventory.
 
