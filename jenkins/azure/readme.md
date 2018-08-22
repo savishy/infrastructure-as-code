@@ -4,6 +4,8 @@ Creates a Linux VM on Azure, adds it to Ansible's inventory and provisions Jenki
 
 ## Highlights
 
+* I have kept the playbook simple - vaulted secrets are stored encrypted, but within clear text files (see [ansible-roles/azurevm/defaults/main.yml](https://github.com/savishy/ansible-roles/blob/master/azurevm/defaults/main.yml)
+
 * Demonstrates my belief that playbooks should not embed roles, and that where possible roles should be externalized and generic. 
   The following roles are used:
   * savishy/ansible-roles
@@ -26,3 +28,5 @@ First load the requirements, then run the playbook.
 ansible-galaxy install -r requirements.yml
 ansible-playbook --ask-vault-pass jenkins.yml
 ```
+
+(Vault Password is available on request.)
