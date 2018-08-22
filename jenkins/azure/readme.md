@@ -27,7 +27,7 @@ Tasks achieved:
 
 You need:
 
-* A Linux Box with functioning Ansible 2.5+. Note: _Ansible cloud provisioners work well with Windows Subsystem for Linux but I have not tested this specific playbook._ 
+* A Linux Box with functioning Ansible 2.5+. Note: _Ansible cloud provisioners work well with Windows Subsystem for Linux but I have not tested this specific playbook with WSL._ 
 * An Azure Account with a service principal.
 * The appropriate Azure Environment Variables for the Service Principal should be configured into your environment. 
 
