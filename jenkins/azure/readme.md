@@ -38,3 +38,9 @@ ansible-playbook --ask-vault-pass jenkins.yml
 ```
 
 (Vault Password is available on request.)
+
+## Verify
+
+Load the Jenkins URL in your browser and verify you can access it. For simplicity I use the default Jenkins port, admin user and password which can be retrieved from geerlingguy/ansible-role-jenkins.
+
+![image](https://user-images.githubusercontent.com/13379978/44446113-4d7cc200-a601-11e8-9e6a-44f607d8dbb2.png)
