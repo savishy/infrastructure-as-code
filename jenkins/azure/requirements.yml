@@ -1,0 +1,3 @@
+- src: https://github.com/savishy/ansible-roles.git
+- geerlingguy.java
+- geerlingguy.jenkins
