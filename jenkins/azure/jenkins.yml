@@ -1,0 +1,13 @@
+- hosts: localhost
+  connection: local
+  vars:
+    vm_groups:
+    - jenkins
+  roles:
+  - ansible-roles/azurevm
+  - ansible-roles/updateinventory
+
+- hosts: jenkins
+  roles:
+    - { role: geerlingguy.java, become: true }
+    - { role: geerlingguy.jenkins, become: true }
