@@ -11,3 +11,4 @@
   roles:
     - { role: geerlingguy.java, become: true }
     - { role: geerlingguy.jenkins, become: true }
+    - { role: geerlingguy.docker, become: true }
