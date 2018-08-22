@@ -2,6 +2,14 @@
 
 Creates a Linux VM on Azure, adds it to Ansible's inventory and provisions Jenkins on it. 
 
+Tasks achieved:
+1. Creation of NIC, Public IP, NSG and Azure Disk
+1. Adding rules to NSG to allow connectivity only from the Ansible controller machine's IP.
+1. Creation of a fully-parameterized Linux VM.
+1. Addition of VM to Ansible dynamic inventory.
+1. Provisioning Java and Jenkins on VM.
+
+
 ## Highlights
 
 * I have kept the playbook simple - vaulted secrets are stored encrypted, but within clear text files (see [ansible-roles/azurevm/defaults/main.yml](https://github.com/savishy/ansible-roles/blob/master/azurevm/defaults/main.yml)
