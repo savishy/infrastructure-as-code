@@ -25,6 +25,11 @@ ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
 
 ```
 
+To execute some actions with Docker the user account that Jenkins runs under, needs to be added to the `docker` group, e.g 
+`sudo usermod -aG docker jenkins`.
+
+
+
 Also ensure that the Jenkins installation has the following plugins at least:
 
 1. Pipeline
