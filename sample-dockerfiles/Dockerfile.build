@@ -1,0 +1,8 @@
+# This Dockerfile is meant to be used as part of a build workflow. 
+# As you can see it expects a petclinic.jar to be present alongside the Dockerfile.
+
+FROM frolvlad/alpine-oraclejdk8:slim
+VOLUME /app
+ADD petclinic.jar /app/petclinic.jar
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar /app/petclinic.jar" ]
