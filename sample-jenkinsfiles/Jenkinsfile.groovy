@@ -9,14 +9,15 @@ The Jenkinsfile proceeds through various stages of the build pipeline:
 * Deploy the Tomcat Image as a container into a server.
 **/
 
-def dockerfileLoc = "${env.WORKSPACE}@script/sample-dockerfiles/"
-def repoUrl = "https://github.com/spring-projects/spring-petclinic"
-def tempDir = pwd(tmp: true)
-def javaHome = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
-def buildCmd = "./mvnw install"
-def dockerServer = "tcp://127.0.0.1:2375"
 node('master') {
-  
+
+  def dockerfileLoc = "${env.WORKSPACE}@script/sample-dockerfiles/"
+  def repoUrl = "https://github.com/spring-projects/spring-petclinic"
+  def tempDir = pwd(tmp: true)
+  def javaHome = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+  def buildCmd = "./mvnw install"
+  def dockerServer = "tcp://127.0.0.1:2375"
+
   stage('Create Docker Workspace') {
     sh "cp ${dockerfileLoc}/Dockerfile ${tempDir}"
     dir(tempDir) {
