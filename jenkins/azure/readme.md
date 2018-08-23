@@ -1,6 +1,6 @@
 # Jenkins Azure Provisioner
 
-Creates a Linux VM on Azure, adds it to Ansible's inventory and provisions Jenkins on it. 
+Creates a Linux VM on Azure, adds it to Ansible's inventory and provisions Jenkins on it. Additionally adds a Docker Registry to the same server to enable Docker-enabled Jenkins pipelines. 
 
 Tasks achieved:
 1. Creation of NIC, Public IP, NSG and Azure Disk
