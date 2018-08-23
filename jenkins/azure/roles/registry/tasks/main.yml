@@ -1,0 +1,75 @@
+---
+- name: ensure python pip is installed.
+  package:
+    name: python-pip
+    state: present
+
+- name: ensure prerequisite Pip packages are present.
+  pip:
+    name: '{{item}}'
+    state: present
+  with_items:
+  - 'pyOpenSSL'
+  - 'docker-py'
+
+# Use self signed certs for Docker Registry
+# https://docs.docker.com/registry/insecure/#use-self-signed-certificates
+# https://www.jeffgeerling.com/blog/2017/generating-self-signed-openssl-certs-ansible-24s-crypto-modules
+
+# TODO this may not work if the registry is located on different server.
+- set_fact: common_name='127.0.0.1'
+
+- name: Ensure holding directory exists for Self Signed Certs.
+  file:
+    path: /certs/{{ common_name }}
+    state: directory
+
+- name: Create OpenSSL private key.
+  openssl_privatekey:
+    path: /certs/{{ common_name }}/domain.key
+
+- name: Create OpenSSL CSR.
+  openssl_csr:
+    path: /certs/{{ common_name }}.csr
+    privatekey_path: /certs/{{ common_name }}/domain.key
+    common_name: "{{ common_name }}"
+
+- name: Create Self Signed OpenSSL certificate.
+  openssl_certificate:
+    path: /certs/{{ common_name }}/domain.crt
+    privatekey_path: /certs/{{ common_name }}/domain.key
+    csr_path: /certs/{{ common_name }}.csr
+    provider: selfsigned
+
+# docker run -d --restart=always -v /certs/127.0.0.1:/certs \
+# -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt  \
+# -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -p 443:443 registry:2
+
+- name: ensure a secure registry container is started listening on 443.
+  docker_container:
+    name: docker_registry
+    restart_policy: always
+    image: 'registry:2'
+    ports:
+    - '443:443'
+    volumes:
+    - '/certs/{{common_name}}:/certs'
+    env:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_HTTP_ADDR: '0.0.0.0:443'
+    state: started
+
+# note that this task currently hardcodes the registry host IP which is a non-ideal solution.
+- name: ensure a registry frontend is started.
+  docker_container:
+    name: docker_registry_frontend
+    restart_policy: always
+    image: 'konradkleine/docker-registry-frontend:v2'
+    ports:
+    - '80:80'
+    env:
+      ENV_DOCKER_REGISTRY_HOST: '172.17.0.1'
+      ENV_DOCKER_REGISTRY_PORT: 443
+      ENV_DOCKER_REGISTRY_USE_SSL: 1
+    state: started
