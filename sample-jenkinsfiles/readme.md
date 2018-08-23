@@ -52,3 +52,8 @@ That's all the configuration needed. If you run the Pipeline you should see the 
 
 
 ![image](https://user-images.githubusercontent.com/13379978/44507182-2c7ea480-a6c7-11e8-83e8-51fb01523429.png)
+
+Browse to the registry frontend:
+
+![image](https://user-images.githubusercontent.com/13379978/44507328-cc3c3280-a6c7-11e8-8aa4-a85367ab634c.png)
+
