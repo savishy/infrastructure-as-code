@@ -2,13 +2,22 @@
 
 **Purpose**: Jenkinsfiles in this directory serve as examples/demo files to be used with the infrastructure-as-code setup in this repository.
 
+## Prerequisites
+
+Using Jenkinsfiles and Docker requires the Docker service to be listening as a daemon, because Docker actions within a Jenkinsfile connect to the TCP Port where Docker is listening (e.g. 2375):
+
+```
+$ sudo netstat -tulpn | grep docker
+tcp6       0      0 :::2375                 :::*                    LISTEN      32687/dockerd
+```
+
+Also ensure that the Jenkins installation has the following plugins at least:
+
+1. Pipeline
+1. Git
+1. Docker
+
 ## How to use
-
-**Prepare**
-
-1. Setup Jenkins using one of the provisioners in this repository.
-1. Make sure Pipeline, Git and Docker plugins are installed in Jenkins.
-1. Make sure Docker is listening as a daemon. 
 
 **Create Jenkins Pipeline Job**
 
