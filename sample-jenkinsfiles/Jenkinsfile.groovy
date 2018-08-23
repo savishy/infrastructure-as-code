@@ -8,39 +8,41 @@ The Jenkinsfile proceeds through various stages of the build pipeline:
 * Create a Tomcat Docker Image that also contains the WAR
 * Deploy the Tomcat Image as a container into a server.
 **/
+
+def dockerfileLoc = "${env.WORKSPACE}@script/sample-dockerfiles/"
+def repoUrl = "https://github.com/spring-projects/spring-petclinic"
+def tempDir = pwd(tmp: true)
+def javaHome = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+def buildCmd = "./mvnw install"
+def dockerServer = "tcp://127.0.0.1:2375"
 node('master') {
-  def dockerfileLoc = "${env.WORKSPACE}@script/docker/petclinic/"
-  def tempDir = pwd(tmp: true)
-  def javaHome = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
-  stage('Create Docker WS') {
+  
+  stage('Create Docker Workspace') {
     sh "cp ${dockerfileLoc}/Dockerfile ${tempDir}"
     dir(tempDir) {
         sh "ls"
     }
   }
 
-  stage('Build Petclinic and Copy to Docker WS') {
+  stage('Checkout Petclinic App') {
+    git url: "${repoUrl}"
+  }
   
-    sh "export JAVA_HOME=${javaHome} && ${buildCmd}"
-  
-  
-  
-    common.checkoutGit("https://github.com/spring-projects/spring-petclinic")
-    common.buildWar("/usr/lib/jvm/java-1.8.0-openjdk-amd64","./mvnw install")
-    //def appVersion = common.getMavenProjectVersion()
+  stage('Build Petclinic App and Copy Artifact to Docker Workspace') {  
+    sh "export JAVA_HOME=${javaHome} && ${buildCmd}"  
+    //TODO avoid hardcoded product version
     def appVersion = "1.5.1"
     sh "cp ./target/spring-petclinic-${appVersion}.jar ${tempDir}/petclinic.jar"
     archiveArtifacts artifacts: "**/target/*.jar"
   }
 
-
   stage('Build Docker Image') {
     dir(tempDir) {
-        sh "ls"
-      common.buildDockerImage(
-        "savishy/tomcat-petclinic:${BUILD_NUMBER}",
-        "."
-      )
+      sh "ls"
+      docker.withServer(dockerServer) {
+        def dockerImageName = "savishy/tomcat-petclinic:${BUILD_NUMBER}"
+        docker.build(dockerImageName,".")
+      }
     }
   }
 
@@ -48,7 +50,4 @@ node('master') {
     echo "This stage pushes the image to registry"
   }
 
-  stage('Deploy Docker Image') {
-    echo "This is where we would use Ansible to deploy the docker image into a server."
-  }
 }
