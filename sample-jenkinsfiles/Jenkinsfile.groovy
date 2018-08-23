@@ -33,6 +33,15 @@ node('master') {
   // name of dockerfile to use, this is because the dir has multiple Dockerfiles named differently.
   def dockerfileName = "Dockerfile.build"
 
+  //the version of the app from POM. 
+  //TODO bad approach avoid this.
+  def appVersion = "2.0.0.BUILD-SNAPSHOT"
+
+  // Registry URL
+  def registryURL = "127.0.0.1"
+  // Docker Image Name
+  def dockerImageName = "${registryURL}/savishy/tomcat-petclinic:${BUILD_NUMBER}"
+
   stage('Create Docker Workspace') {
     sh "cp ${dockerfileLoc}/${dockerfileName} ${tempDir}/Dockerfile"
     dir(tempDir) {
@@ -44,26 +53,25 @@ node('master') {
     git url: "${repoUrl}"
   }
   
-  stage('Build Petclinic App and Copy Artifact to Docker Workspace') {  
+  stage("Build Petclinic ${appVersion} and Copy Artifact to Docker Workspace") {  
     sh "export JAVA_HOME=${javaHome} && ${buildCmd}"  
-    //TODO avoid hardcoded product version
-    def appVersion = "2.0.0.BUILD-SNAPSHOT"
     sh "cp ./target/spring-petclinic-${appVersion}.jar ${tempDir}/petclinic.jar"
     archiveArtifacts artifacts: "**/target/*.jar"
   }
 
-  stage('Build Docker Image') {
+  stage("Build Docker Image ${dockerImageName}") {
     dir(tempDir) {
       sh "ls"
       docker.withServer(dockerServer) {
-        def dockerImageName = "savishy/tomcat-petclinic:${BUILD_NUMBER}"
-        docker.build(dockerImageName,".")
+        dockerImage = docker.build(dockerImageName,".")
       }
     }
   }
 
-  stage('Push Docker Image To Registry') {
-    echo "This stage pushes the image to registry"
+  stage("Push Docker Image ${dockerImageName} To Registry") {
+    docker.withRegistry(${registryURL}) {
+      dockerImage.push()
+    }
   }
 
 }
