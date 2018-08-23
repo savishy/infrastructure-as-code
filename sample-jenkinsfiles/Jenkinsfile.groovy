@@ -32,7 +32,7 @@ node('master') {
   stage('Build Petclinic App and Copy Artifact to Docker Workspace') {  
     sh "export JAVA_HOME=${javaHome} && ${buildCmd}"  
     //TODO avoid hardcoded product version
-    def appVersion = "1.5.1"
+    def appVersion = "2.0.0.BUILD-SNAPSHOT"
     sh "cp ./target/spring-petclinic-${appVersion}.jar ${tempDir}/petclinic.jar"
     archiveArtifacts artifacts: "**/target/*.jar"
   }
