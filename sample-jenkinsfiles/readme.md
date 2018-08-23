@@ -11,6 +11,20 @@ $ sudo netstat -tulpn | grep docker
 tcp6       0      0 :::2375                 :::*                    LISTEN      32687/dockerd
 ```
 
+On Ubuntu 16.04 for example, this is easily achieved using a Systemd drop-in:
+
+```
+# Create the following file:
+/etc/systemd/system/docker.service.d/docker.conf
+
+# Populate it with:
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
+
+```
+
 Also ensure that the Jenkins installation has the following plugins at least:
 
 1. Pipeline
