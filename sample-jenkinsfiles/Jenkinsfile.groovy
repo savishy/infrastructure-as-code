@@ -69,7 +69,7 @@ node('master') {
   }
 
   stage("Push Docker Image ${dockerImageName} To Registry") {
-    docker.withRegistry("${registryURL}") {
+    docker.withRegistry("https://${registryURL}") {
       dockerImage.push()
     }
   }
