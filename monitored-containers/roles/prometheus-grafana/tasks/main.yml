@@ -1,0 +1,77 @@
+---
+# tasks file for roles/prometheus-grafana
+
+- name: Create a temporary Docker workspace
+  tempfile:
+    state: directory
+  register: tempdir
+
+- name: Template out Prometheus Dockerfile to {{tempdir.path}}
+  template:
+    src: Dockerfile_prometheus
+    dest: '{{tempdir.path}}'
+
+- name: Template out Prometheus Config to {{tempdir.path}}
+  template:
+    src: prometheus.yml
+    dest: '{{tempdir.path}}'
+
+- name: Build Prometheus Docker Image.
+  docker_image:
+    path: '{{tempdir.path}}'
+    dockerfile: Dockerfile_prometheus
+    name: prometheus_img
+
+- name: Create a network
+  docker_network:
+    name: '{{mon_docker_network_name}}'
+
+- name: Create Prometheus Container
+  docker_container:
+    name: prometheus_container
+    image: prometheus_img
+    state: started
+    ports:
+     - "{{prom_port}}:{{prom_port}}"
+    networks:
+    - name: '{{mon_docker_network_name}}'
+
+- name: Create Grafana Container
+  docker_container:
+    name: grafana_container
+    image: 'grafana/grafana:{{grafana_version}}'
+    state: started
+    ports:
+     - "{{grafana_port}}:{{grafana_port}}"
+    networks:
+    - name: '{{mon_docker_network_name}}'
+
+- uri:
+    url: '{{grafana_api_root}}/datasources'
+    method: GET
+    user: admin
+    password: admin
+    force_basic_auth: yes
+  register: grafana_datasources
+
+- set_fact: create_datasource={{ grafana_datasources.json|length == 0 }}
+
+- uri:
+    url: '{{grafana_api_root}}/datasources'
+    method: POST
+    user: admin
+    password: admin
+    force_basic_auth: yes
+    body: |
+      {
+      "name":"prometheus",
+      "type":"prometheus",
+      "access":"proxy",
+      "url":"http://prometheus_container:{{prom_port}}",
+      "basicAuth": true,
+      "basicAuthUser":"admin",
+      "basicAuthPassword":"admin",
+      "isDefault": true
+      }
+    body_format: json
+  when: create_datasource
