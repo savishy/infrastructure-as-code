@@ -1,0 +1,35 @@
+---
+# defaults file for roles/prometheus-grafana
+
+# version of prometheus docker image to use.
+prom_version: 2.3.2
+
+# grafana version for docker container
+grafana_version: 5.2.1
+
+# docker network that the prometheus container is on.
+
+mon_docker_network_name: monitoring
+
+# application container's name. App should be on the same network as prometheus for this to work.
+app_name: petclinic
+
+# job name to use for prometheus purposes.
+job_name: '{{app_name}}-app'
+
+# metrics endpoint exposed by the application.
+metrics_path: '/manage/prometheus'
+
+# application listens on this port
+app_port: 9080
+
+# prometheus UI available on this port.
+prom_port: 9090
+
+grafana_port: 3000
+
+# interval at which prometheus will scrape the endpoint above.
+scrape_interval: 10s
+
+# grafana API root
+grafana_api_root: 'http://172.17.0.1:{{grafana_port}}/api'
