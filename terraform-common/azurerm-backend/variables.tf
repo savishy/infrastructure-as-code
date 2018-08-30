@@ -1,5 +1,4 @@
 # https://www.terraform.io/docs/configuration/variables.html
-variable "env" {}
 variable "azure_client_id" {}
 variable "azure_client_secret" {}
 variable "azure_tenant_id" {}
