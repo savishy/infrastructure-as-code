@@ -1,6 +1,9 @@
 # Terraform - AzureRM Backend
 
-Creates a storage backend on Azure for state storage for Terraform.
+* This is a _common provisioner_ for Terraform IaC scenarios.
+* It creates a storage backend on Azure for state storage for Terraform.
+  * Read about offsite state storage [here](https://www.terraform.io/docs/backends/).
+* _Terraform itself_ is used to provision this stage storage account. 
 
 ## Prerequisites
 
