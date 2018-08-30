@@ -39,3 +39,7 @@ $ az account show
 * Execute `terraform init`
 * Execute `terraform plan`
 * Execute `terraform apply`.
+
+Verify from the Azure Portal. A storage account with a blob storage container would have been created.
+
+![image](https://user-images.githubusercontent.com/13379978/44835803-e4292e80-ac52-11e8-930d-ccda1e416892.png)
