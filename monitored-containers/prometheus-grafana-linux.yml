@@ -1,0 +1,19 @@
+- name: create Azure VMs.
+  hosts: localhost
+  connection: local
+  vars_files:
+  - vars_linux.yml
+  roles:
+  - { role: ansible-roles/azurevm }
+  - { role: ansible-roles/updateinventory, tags: always }
+
+  tasks:
+  - debug: var=vault_vm_password
+    tags: password
+
+- name: provision prometheus and grafana.
+  hosts: monitoring
+  roles:
+  - prometheus-grafana
+  tags: prom
+
