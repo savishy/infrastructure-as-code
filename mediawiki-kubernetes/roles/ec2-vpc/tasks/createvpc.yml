@@ -1,0 +1,32 @@
+---
+- name: Check whether VPC {{ec2_vpc_name}} exists.
+  ec2_vpc_net_facts:
+    filters:
+      'tag:Name': "{{ec2_vpc_name}}"
+  register: vpc_details
+  tags: always
+
+- name: Store VPC ID for future use if it exists already.
+  set_fact:
+    ec2_vpc_id: "{{vpc_details.vpcs[0].vpc_id}}"
+  when: vpc_details.vpcs|length > 0
+  tags: always
+
+- block:
+  - name: Create a VPC {{ec2_vpc_name}} if not found.
+    ec2_vpc_net:
+      name: "{{ec2_vpc_name}}"
+      cidr_block: "{{ec2_vpc_block}}"
+      region:
+      tags:
+        Name: "{{ec2_vpc_name}}"
+        ansible_managed: true
+      tenancy: default
+    register: vpc_created_details
+  - name: Store VPC ID for future use.
+    set_fact:
+      ec2_vpc_id: "{{vpc_created_details.vpc.id}}"
+  when: vpc_details.vpcs|length == 0
+
+- debug: var=vpc_details
+- debug: var=ec2_vpc_id

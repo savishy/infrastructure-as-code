@@ -1,0 +1,12 @@
+---
+# TODO this is to be peeled out into an independently callable role.
+
+# as of ansible 2.5.3 the ec2_vpc_net task reports an unneeded change
+# even if VPC exists. So extra logic is needed to ensure idempotency.
+
+# facts needed by multiple tasks should always run
+# even if we run the playbook with --tags.
+# so we specify tags: always
+
+- include_tasks: createvpc.yml
+- include_tasks: createsubnets.yml
