@@ -1,0 +1,27 @@
+---
+
+- block:
+  - name: get EC2 AMI ID
+    ec2_ami_facts:
+      owner: "{{ec2_ubuntu_owner}}"
+      region: "{{ec2_region}}"
+      filters:
+        architecture: x86_64
+        name: '{{ec2_ubuntu_ami_name}}'
+    register: ec2_ami_details
+  - set_fact: ec2_ami_id={{ec2_ami_details.images[0].image_id}}
+  - debug: var=ec2_ami_id
+  tags: ami
+
+- block:
+  - name: get ec2 group details
+    ec2_group_facts:
+      region: "{{ec2_region}}"
+      filters:
+        group-name: "{{ec2_group_name}}"
+    register: ec2_group_details
+
+  - include_tasks: createinstance.yml vm_name={{item.key}} vm_details={{item.value}}
+    with_dict: "{{vms}}"
+
+  tags: instance
