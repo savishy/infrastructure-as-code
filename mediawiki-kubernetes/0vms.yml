@@ -1,0 +1,8 @@
+---
+- name: Create EC2 Instances for MediaWiki.
+  hosts: localhost
+  connection: local
+  roles:
+#  - {role: ec2-vpc, tags: vpc}
+  - {role: ansible-roles/ec2-create-group, tags: group}
+  - {role: ec2-instance, tags: instance}

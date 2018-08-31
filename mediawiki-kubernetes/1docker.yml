@@ -1,0 +1,5 @@
+---
+- name: Prepare EC2 instances with prerequisites like Docker.
+  hosts: all
+  roles:
+  - {role: ansible-roles/install-docker, tags: docker}
