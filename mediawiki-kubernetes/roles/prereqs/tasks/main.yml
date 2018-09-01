@@ -1,0 +1,19 @@
+---
+# ensure prereqs on localhost
+- block:
+  - name: ensure pip is installed on localhost
+    apt:
+      name: python-pip
+      state: present
+  - name: ensure pip packages are installed on localhost
+    pip:
+      name: "{{item}}"
+      state: present
+    with_items:
+    - boto3
+  - name: Install AWS CLI. (Some AWS modules like ECR require AWS CLI).
+    apt:
+      name: 'awscli'
+      state: present
+  delegate_to: localhost
+  become: true
