@@ -1,5 +1,0 @@
----
-- name: Create a DB.
-  hosts: tag_Name_db
-  roles:
-  - {role: ansible-roles/install-docker, tags: docker}
