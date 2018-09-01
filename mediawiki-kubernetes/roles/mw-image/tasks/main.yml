@@ -2,11 +2,12 @@
 
 - block:
 
-  - name: Retrieve the IP for MySQL instance.
+  - name: Retrieve the IP for MySQL instance to use in Dockerfile build.
     set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_private_ip_address']}}
+
   - debug: var=mysql_db_host
 
-  - name: Create staging dir for Docker.
+  - name: Create workspace for Docker build.
     tempfile:
       state: directory
     register: temp_docker_ws
@@ -19,25 +20,21 @@
     - LocalSettings.php
     - Dockerfile
 
-  - name: Ensure AWS CLI is installed.
-    package:
-      name: awscli
-    become: true
-
-  - name: Get AWS ECR login token.
-    shell: "$(aws ecr get-login --region {{ec2_region}})"
+  - name: Include task to execute ECR Login.
+    include_role:
+      name: common
+      tasks_from: ecr-login
 
   - name: Build a MediaWiki Docker Image and push it to ECR.
     docker_image:
-      name: 'mediawiki_image'
-      tag: 1.0
+      name: '{{ecr_repo_url_app}}'
+      tag: '{{mw_app_ver}}'
       path: '{{temp_docker_ws.path}}'
-      repository: '{{ecr_repo_url}}'
       push: yes
   - name: Run a MediaWiki container.
     docker_container:
-      name: 'mediawiki_container'
-      image: mediawiki_image:1.0
+      name: '{{mw_app_name}}'
+      image: '{{ecr_repo_url_app}}:{{mw_app_ver}}'
       ports:
       - 8080:80
 

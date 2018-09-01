@@ -1,5 +1,5 @@
 ---
-- name: Create staging dir for Docker.
+- name: Create temp workspace for Docker build.
   tempfile:
     state: directory
   register: temp_docker_db_ws
@@ -12,26 +12,22 @@
   - mwdatabase.sql
   - Dockerfile
 
-- name: Ensure AWS CLI is installed.
-  package:
-    name: awscli
-  become: true
-
-- name: Get AWS ECR login token.
-  shell: "$(aws ecr get-login --region {{ec2_region}})"
+- name: Include task to execute ECR Login.
+  include_role:
+    name: common
+    tasks_from: ecr-login
 
 - name: Build a MySQL DB Docker Image with MediaWiki DB initialization and push to ECR.
   docker_image:
-    name: 'mysql_image'
-    tag: 1.0
+    name: '{{ecr_repo_url_db}}'
+    tag: '{{mw_db_ver}}'
     path: '{{temp_docker_db_ws.path}}'
-    repository: '{{ecr_repo_url}}'
     push: yes
 
 - name: Create a DB Docker container which initializes the MediaWiki DB.
   docker_container:
-    name: mysql
-    image: mysql_image:1.0
+    name: '{{mw_db_name}}'
+    image: '{{ecr_repo_url_db}}:{{mw_db_ver}}'
     state: started
     ports:
      - "3306:3306"
