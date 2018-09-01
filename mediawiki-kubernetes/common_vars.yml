@@ -1,8 +1,27 @@
 ---
 # Elastic Container Registry Details
-ecr_repo_name: savishy/mwrepo
+mw_app_name: mwapp
+mw_db_name: mwdb
+mw_app_ver: 1.0
+mw_db_ver: 1.0
 ecr_repo_root: '006475447375.dkr.ecr.us-east-1.amazonaws.com'
-ecr_repo_url: '{{ecr_repo_root}}/{{ecr_repo_name}}'
 
-# region where VPC and VMs will reside.
+ecr_repo_name_app: 'savishy/{{mw_app_name}}'
+ecr_repo_name_db: 'savishy/{{mw_db_name}}'
+ecr_repo_url_app: '{{ecr_repo_root}}/{{ecr_repo_name_app}}'
+ecr_repo_url_db: '{{ecr_repo_root}}/{{ecr_repo_name_db}}'
+
+# AWS region where all resources incl VPC and VMs will reside.
 ec2_region: us-east-1
+
+# Kubernetes configuration
+kubernetes_allow_pods_on_master: true
+kubernetes_enable_web_ui: true
+
+kubernetes_packages:
+  - name: kubelet
+    state: present
+  - name: kubeadm
+    state: present
+  - name: kubernetes-cni
+    state: present

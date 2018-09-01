@@ -1,1 +1,2 @@
 - src: https://github.com/savishy/ansible-roles
+- geerlingguy.kubernetes

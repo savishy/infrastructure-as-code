@@ -1,11 +1,21 @@
 ---
+# localhost prerequisites are required by all future plays.
+# we append the "always" tag to ensure the play runs
+# even if we are running with --tag=<something>.
+
+# at time of writing, Chef is installed on my Windows machine.
+# Ansible run through WSL tries to use Ohai to locate localhost facts, which I don't want.
+# So I disabled gather_facts for localhost.
+
 - name: Ensure prerequisites on localhost.
   hosts: localhost
   connection: local
+  gather_facts: false
   vars_files:
   - common_vars.yml
   roles:
   - prereqs
+  tags: always
 
 - name: Ensure prerequisites on EC2 instances.
   hosts: all
@@ -13,6 +23,7 @@
   - common_vars.yml
   roles:
   - {role: ansible-roles/install-docker, tags: docker}
+  tags: docker
 
 - name: Create a DB Docker Image, Push to ECR and run a container initialized with MediaWiki Schema.
   hosts: tag_Name_mysql
@@ -20,10 +31,12 @@
   - common_vars.yml
   roles:
   - db
+  tags: db
 
-- name: Create Docker container for MediaWiki.
+- name: Create MediaWiki Docker image, push to ECR and run a container pre-initialized with config.
   hosts: tag_Name_mw
   vars_files:
   - common_vars.yml
   roles:
   - mw-image
+  tags: mw
