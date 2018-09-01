@@ -1,0 +1,47 @@
+---
+
+- block:
+
+  - name: Retrieve the IP for MySQL instance.
+    set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_private_ip_address']}}
+  - debug: var=mysql_db_host
+
+  - name: Create staging dir for Docker.
+    tempfile:
+      state: directory
+    register: temp_docker_ws
+
+  - name: Template out the files to Docker workspace.
+    template:
+      src: '{{item}}'
+      dest: '{{temp_docker_ws.path}}'
+    with_items:
+    - LocalSettings.php
+    - Dockerfile
+
+  - name: Ensure AWS CLI is installed.
+    package:
+      name: awscli
+    become: true
+
+  - name: Get AWS ECR login token.
+    shell: "$(aws ecr get-login --region {{ec2_region}})"
+
+  - name: Build a MediaWiki Docker Image and push it to ECR.
+    docker_image:
+      name: 'mediawiki_image'
+      tag: 1.0
+      path: '{{temp_docker_ws.path}}'
+      repository: '{{ecr_repo_url}}'
+      push: yes
+  - name: Run a MediaWiki container.
+    docker_container:
+      name: 'mediawiki_container'
+      image: mediawiki_image:1.0
+      ports:
+      - 8080:80
+
+  run_once: true
+
+  # php /var/www/html/maintenance/install.php --conf /var/www/html/
+  # Usage: php install.php [--conf|--confpath|--dbname|--dbpass|--dbpassfile|--dbpath|--dbport|--dbprefix|--dbschema|--dbserver|--dbtype|--dbuser|--env-checks|--globals|--help|--installdbpass|--installdbuser|--lang|--memory-limit|--mwdebug|--pass|--passfile|--profiler|--quiet|--scriptpath|--server|--wiki|--with-extensions] [name] <admin>
