@@ -15,6 +15,7 @@
 - name: Ensure AWS CLI is installed.
   package:
     name: awscli
+  become: true
 
 - name: Get AWS ECR login token.
   shell: "$(aws ecr get-login --region {{ec2_region}})"
