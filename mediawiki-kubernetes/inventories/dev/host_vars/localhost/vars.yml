@@ -48,8 +48,8 @@ vms:
 # Note - Longer 17-char instance IDs used.
 # Note - instance id format is i-[17 chars] where chars are 0-9 and a-f.
 client_tokens:
-  mw: 3698cdcb1f9091a0c
-  db: 49ce34ababce16112
+  mw: 3698cdcb1f9591a0a
+  db: 49ce34ababc516113
 
 # TODO This is defined twice - in localhost as well as group_vars.
 # localhost needs it to be able to execute wait_for_connection module.
