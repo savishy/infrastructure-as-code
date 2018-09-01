@@ -1,0 +1,9 @@
+- name: Create AWS Elastic Container Registry in ECS.
+  hosts: localhost
+  connection: local
+  vars_files:
+  - common_vars.yml
+  tasks:
+  - name: create ECR.
+    ecs_ecr:
+      name: '{{ecr_repo_name}}'

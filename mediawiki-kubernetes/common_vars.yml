@@ -1,0 +1,8 @@
+---
+# Elastic Container Registry Details
+ecr_repo_name: savishy/mwrepo
+ecr_repo_root: '006475447375.dkr.ecr.us-east-1.amazonaws.com'
+ecr_repo_url: '{{ecr_repo_root}}/{{ecr_repo_name}}'
+
+# region where VPC and VMs will reside.
+ec2_region: us-east-1

@@ -1,0 +1,7 @@
+---
+- name: Create EC2 Instances for MediaWiki.
+  hosts: tag_Name_mw
+  vars_files:
+  - common_vars.yml
+  roles:
+  - mw-image
