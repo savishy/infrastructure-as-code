@@ -1,0 +1,56 @@
+---
+
+ec2_vpc_id: vpc-c21844bb
+
+ec2_group_name: mwdev
+# Variable values for ec2-vpc role.
+
+# name of VPC to create.
+ec2_vpc_name: mwdev
+
+# VPC address block.
+# ec2_vpc_block: 10.11.0.0/16
+
+# Dictionary of subnet blocks for VPC.
+# The assumption is each type of VM goes into one subnet.
+ec2_subnets:
+  mw:
+    cidr: 10.11.0.0/28
+  db:
+    cidr: 10.11.0.16/28
+
+# Variable values for ec2-instance role.
+env: dev
+
+vms:
+  mw:
+    instance_type: t2.small
+    idempotent_token: "{{client_tokens.mw}}"
+    count: 2
+    cidr: "{{ec2_subnets.mw.cidr}}"
+    tags:
+      Name: mw
+      env: '{{env}}'
+      Desc: MediaWiki Server
+  db:
+    instance_type: t2.medium
+    idempotent_token: "{{client_tokens.db}}"
+    count: 1
+    cidr: "{{ec2_subnets.db.cidr}}"
+    tags:
+      Name: mysql
+      env: '{{env}}'
+      Desc: MySQL Server
+
+# For details of token, see
+# https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html
+# CLient Token is used to pass the idempotent token as well as decide the instance ID.
+# Note - Longer 17-char instance IDs used.
+# Note - instance id format is i-[17 chars] where chars are 0-9 and a-f.
+client_tokens:
+  mw: 3698cdcb1f9091a0c
+  db: 49ce34ababce16112
+
+# TODO This is defined twice - in localhost as well as group_vars.
+# localhost needs it to be able to execute wait_for_connection module.
+ansible_user: ubuntu

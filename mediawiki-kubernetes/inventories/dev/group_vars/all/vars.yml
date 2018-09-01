@@ -1,0 +1,13 @@
+env: dev
+
+# default user is used for ansible execution.
+ansible_user: 'ubuntu'
+
+# mediawiki mysql db name that was created when the DB container was created.
+mysql_db_name: mwdatabase
+# mediawiki mysql user. password is vault_mysql_pass
+mysql_db_user: mwiki
+
+# user account for docker
+docker_user: '{{ansible_user}}'
+docker_api_port: 2375
