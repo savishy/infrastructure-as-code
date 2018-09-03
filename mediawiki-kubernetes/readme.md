@@ -59,3 +59,4 @@ Please see [notes.md](notes.md) for observations and notes from developing this 
 1. ECR with Ansible: [1](https://awsbloglink.wordpress.com/2017/06/03/manage-amazon-ec2-container-registry-with-ansible/), [2](https://forums.docker.com/t/docker-push-to-ecr-failing-with-no-basic-auth-credentials/17358/2), [3](https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html)
 1. [Enabling Debug Logging in MediaWiki](https://www.mediawiki.org/wiki/Topic:U26n1a1pgo0078tt)
 1. [`register` runs even on skipped tasks](https://github.com/ansible/ansible/issues/4297)
+1. Ansible Tips and Tricks: [1](https://stackoverflow.com/a/34929776)
