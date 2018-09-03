@@ -59,3 +59,13 @@ Please see [notes.md](notes.md) for observations and notes from developing this 
 1. ECR with Ansible: [1](https://awsbloglink.wordpress.com/2017/06/03/manage-amazon-ec2-container-registry-with-ansible/), [2](https://forums.docker.com/t/docker-push-to-ecr-failing-with-no-basic-auth-credentials/17358/2), [3](https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html)
 1. [Enabling Debug Logging in MediaWiki](https://www.mediawiki.org/wiki/Topic:U26n1a1pgo0078tt)
 1. [`register` runs even on skipped tasks](https://github.com/ansible/ansible/issues/4297)
+1. Ansible Tips and Tricks: [1](https://stackoverflow.com/a/34929776)
+
+Kubernetes
+1. https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+1. https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
+1. Filtering `kubectl` output: https://gist.github.com/so0k/42313dbb3b547a0f51a547bb968696ba
+1. https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/, https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+1. https://github.com/weaveworks/weave/issues/2888
+1. External DB Access: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+   https://groups.google.com/forum/#!msg/kubernetes-dev/TD4v5710jkQ/EWoMXVJCHAAJ
