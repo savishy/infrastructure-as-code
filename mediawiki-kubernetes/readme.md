@@ -67,3 +67,4 @@ Kubernetes
 1. Filtering `kubectl` output: https://gist.github.com/so0k/42313dbb3b547a0f51a547bb968696ba
 1. https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/, https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
 1. https://github.com/weaveworks/weave/issues/2888
+1. External DB Access: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
