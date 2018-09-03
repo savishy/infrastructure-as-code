@@ -60,5 +60,8 @@ Please see [notes.md](notes.md) for observations and notes from developing this 
 1. [Enabling Debug Logging in MediaWiki](https://www.mediawiki.org/wiki/Topic:U26n1a1pgo0078tt)
 1. [`register` runs even on skipped tasks](https://github.com/ansible/ansible/issues/4297)
 1. Ansible Tips and Tricks: [1](https://stackoverflow.com/a/34929776)
+
+Kubernetes
 1. https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 1. https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
+1. Filtering `kubectl` output: https://gist.github.com/so0k/42313dbb3b547a0f51a547bb968696ba
