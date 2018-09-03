@@ -12,9 +12,11 @@ Specifically for Docker for Windows; to enable the MediaWiki container to access
 
 Otherwise during MediaWiki setup you won't be able to provide 172.17.0.1 as the IP for MySQL.
 
-### `gather_subset = !ohai` in ansible.cfg
+### `gather_facts = false` for plays running on localhost.
 
-This is needed because I execute Ansible through WSL on Windows, and ChefDK is also installed. Ansible detects that `ohai` is present and tries to use `ohai` to gather facts - which fails with:
+* I execute Ansible through WSL on Windows
+* ChefDK is also installed on Windows.
+* Ansible detects that `ohai` is present in the path and tries to use `ohai` to gather facts on localhost - which fails with:
 
 ```
 fatal: [localhost]: FAILED! => {
@@ -35,4 +37,24 @@ fatal: [localhost]: FAILED! => {
 }
 ```
 
-I do not want Ansible to use Ohai to gather facts about localhost, so I disable ohai in ansible.cfg.
+As a result I disabled fact gathering for localhost plays.
+
+### Nodes do not have `ansible_default_ipv4` defined which causes `geerlingguy.kubernetes` role to fail.
+
+* The Kubernetes role tries to do a `kubeadm init` and fails with an error.
+* The error is on the lines of `ansible_default_ipv4.address is not defined`.
+
+Ref: https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/
+
+This error was because:
+
+* I had set `gather_subset: !ohai` in ansible.cfg for troubleshooting.
+* This somehow limited the facts gathered in remote hosts.
+* As a result the `ansible_default_ipv4` fact was not being set.
+* Removing this fixed the issue.
+
+### `register` stores facts even if a task is skipped, which was causing `geerlingguy.kubernetes` role to behave unexpectedly.
+
+* For tasks that get skipped, the `register` stores the output `skipped`.
+* This corrupts the `kubernetes_join_command` variable and the node fails to join the kubernetes cluster.
+* Relevant issue https://github.com/ansible/ansible/issues/4297

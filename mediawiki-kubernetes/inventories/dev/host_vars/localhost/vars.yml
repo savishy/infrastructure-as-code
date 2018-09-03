@@ -1,7 +1,6 @@
 ---
-
-ec2_vpc_id: vpc-c21844bb
-
+# Default VPC ID.
+ec2_vpc_id: "vpc-c21844bb"
 ec2_group_name: mwdev
 # Variable values for ec2-vpc role.
 

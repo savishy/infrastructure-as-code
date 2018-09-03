@@ -1,0 +1,26 @@
+---
+# Execute AWS CLI commands to get ECR Token.
+# This task could be executed on remote hosts
+# but that would involve distributing my CLI credentials to remote hosts.
+# Instead I choose to generate the login token (which is temporary) locally and store that in
+# a variable accessible to remote hosts.
+
+- name: AWS Configure
+  shell: |
+    aws configure set aws_access_key_id {{ lookup('env','AWS_ACCESS_KEY_ID')}}
+    aws configure set aws_secret_access_key {{ lookup('env','AWS_SECRET_ACCESS_KEY')}}
+  no_log: true
+
+# Note: This command generates a command "docker login" with a temporary token.
+# Docker 18+ has deprecated the -e option in docker login.
+# To avoid generating the -e option we use --no-include-email.
+# Ref: https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html
+
+- name: Get AWS ECR login token. Generate a command suitable for Docker 18+.
+  shell: "aws ecr get-login --no-include-email --region {{ec2_region}}"
+  register: aws_ecr_login_out
+  no_log: true
+
+- name: Store AWS ECR Login Token in variable.
+  set_fact: aws_ecr_login={{aws_ecr_login_out.stdout}}
+  no_log: true
