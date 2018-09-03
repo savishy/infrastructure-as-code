@@ -21,6 +21,14 @@
   register: aws_ecr_login_out
   no_log: true
 
-- name: Store AWS ECR Login Token in variable.
+- name: Store AWS ECR Login Docker command in variable.
   set_fact: aws_ecr_login={{aws_ecr_login_out.stdout}}
   no_log: true
+
+- name: Extract AWS ECR Login Token for use.
+  set_fact:
+    aws_ecr_login_token: "{{ aws_ecr_login.split() | select('match','[0-9A-Za-z]+=') | list | first }}"
+    aws_ecr_login_username: AWS
+
+- fail: msg="Could not find or extract ECR Login Token"
+  when: aws_ecr_login_token | length == 0

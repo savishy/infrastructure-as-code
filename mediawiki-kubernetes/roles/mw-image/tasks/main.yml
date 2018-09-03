@@ -2,9 +2,13 @@
 
 - block:
 
-  - name: Retrieve the IP for MySQL instance to use in Dockerfile build.
-    set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_private_ip_address']}}
+  # - name: Retrieve the IP for MySQL instance to use in Dockerfile build.
+  #   set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_private_ip_address']}}
 
+  # - name: Retrieve the IP for MySQL instance to use in Dockerfile build.
+  #   set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_ip_address']}}
+
+  - set_fact: mysql_db_host="10.104.88.2"
   - debug: var=mysql_db_host
 
   - name: Create workspace for Docker build.
@@ -31,12 +35,13 @@
       tag: '{{mw_app_ver}}'
       path: '{{temp_docker_ws.path}}'
       push: yes
-  - name: Run a MediaWiki container.
-    docker_container:
-      name: '{{mw_app_name}}'
-      image: '{{ecr_repo_url_app}}:{{mw_app_ver}}'
-      ports:
-      - 8080:80
+      
+  # - name: Run a MediaWiki container.
+  #   docker_container:
+  #     name: '{{mw_app_name}}'
+  #     image: '{{ecr_repo_url_app}}:{{mw_app_ver}}'
+  #     ports:
+  #     - 8080:80
 
   run_once: true
 

@@ -11,6 +11,7 @@
       name: common
       tasks_from: generate-ecr-login
 
+      
 - name: Deploy the app on Kubernetes cluster.
   hosts: tag_Name_mw
   vars_files:

@@ -1,1 +1,6 @@
 kube_deployment: mediawiki-kube
+kube_container: mediawiki-kube-container
+kube_secret: regcred
+kube_label: mediawiki
+kube_config_path: '/tmp/{{mw_app_name}}_deployconfig.yml'
+kube_replicas: 2
