@@ -68,3 +68,4 @@ Kubernetes
 1. https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/, https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
 1. https://github.com/weaveworks/weave/issues/2888
 1. External DB Access: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+   https://groups.google.com/forum/#!msg/kubernetes-dev/TD4v5710jkQ/EWoMXVJCHAAJ
