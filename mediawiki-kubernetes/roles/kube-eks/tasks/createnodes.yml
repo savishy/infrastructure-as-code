@@ -18,3 +18,16 @@
       VpcId: '{{eks_vpc_out.stack_outputs.VpcId}}'
       ClusterControlPlaneSecurityGroup: '{{eks_vpc_out.stack_outputs.SecurityGroups}}'
   register: eks_node_out
+
+- debug: var=eks_node_out.stack_outputs.NodeInstanceRole
+- name: Send Kubectl config that enables worker nodes to join cluster.
+  template:
+    src: aws-auth-cm.yaml
+    dest: /tmp/aws-auth-cm.yml
+    
+- name: Enable Worker Nodes to join the cluster with kubectl.
+  shell: kubectl apply -f /tmp/aws-auth-cm.yml
+
+- name: Wait until nodes are ready
+  shell: kubectl get nodes --watch
+  

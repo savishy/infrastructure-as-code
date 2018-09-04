@@ -1,0 +1,19 @@
+---
+- name: Retrieve the IP for MySQL instance to use in Dockerfile build.
+  set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_ip_address']}}
+
+- template:
+    src: '{{item}}'
+    dest: /tmp/{{item}}
+  with_items:
+  - mwdbexternal_service.yml
+  - mwdbexternal_endpoint.yml
+
+# Create service to access external DB
+- name: Create service and endpoint to access external DB
+  shell: kubectl create -f /tmp/{{item}}
+  with_items:
+  - mwdbexternal_service.yml
+  - mwdbexternal_endpoint.yml
+
+- fail: msg=foo

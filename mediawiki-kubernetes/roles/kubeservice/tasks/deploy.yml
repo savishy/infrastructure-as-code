@@ -1,19 +1,7 @@
 ---
-- name: Check if Login Secret exists in kube.
-  shell: kubectl get secret {{kube_secret}}
-  ignore_errors: yes
-  register: kube_existing_secret
-
-- name: Delete Login Secret if it exists. This is because its a temporary secret valid for 12 hours.
-  shell: kubectl delete secret {{kube_secret}}
-  when: kube_existing_secret is not failed
-
-- name: Generate Login Secret.
-  shell: |
-    kubectl create secret docker-registry {{kube_secret}} --docker-server={{ecr_repo_root}} \
-    --docker-username={{ hostvars['localhost']['aws_ecr_login_username'] }} \
-    --docker-password={{ hostvars['localhost']['aws_ecr_login_token'] }}
-
+- include_tasks: createloginsecret.yml
+- include_tasks: createdbservice.yml
+  
 - name: Generate Kubernetes Pod Config file.
   template:
     src: deployconfig.yml
@@ -53,26 +41,3 @@
 - name: Print the exposed port which is in range 30000-32767.
   shell: kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services {{kube_deployment}}
 
-# Create service to access external DB
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: mwdbexternal
-# spec:
-#   ports:
-#   - port: 3306
-#     targetPort: 3306
-
-
-# create endpoint for above service manually
-# ---
-# apiVersion: v1
-# kind: Endpoints
-# metadata:
-#   name: mwdbexternal
-# subsets:
-# - addresses:
-#   - ip: 35.153.106.116
-#   ports:
-#   - port: 3306
-                      
