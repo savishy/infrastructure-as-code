@@ -1,7 +1,15 @@
 ---
-- name: Generate or Refresh Login Secret.
+- name: Check if Login Secret exists in kube.
+  shell: kubectl get secret {{kube_secret}}
+  ignore_errors: yes
+  register: kube_existing_secret
+
+- name: Delete Login Secret if it exists. This is because its a temporary secret valid for 12 hours.
+  shell: kubectl delete secret {{kube_secret}}
+  when: kube_existing_secret is not failed
+
+- name: Generate Login Secret.
   shell: |
-    kubectl delete secret {{kube_secret}}
     kubectl create secret docker-registry {{kube_secret}} --docker-server={{ecr_repo_root}} \
     --docker-username={{ hostvars['localhost']['aws_ecr_login_username'] }} \
     --docker-password={{ hostvars['localhost']['aws_ecr_login_token'] }}
@@ -12,14 +20,15 @@
     dest: '{{kube_config_path}}'
 
 - name: Create Kubernetes Deployment from Config.
-  shell: |
-    kubectl create -f {{kube_config_path}}
+  shell: kubectl create -f {{kube_config_path}}
+  register: kube_deployment_out
+  changed_when: "'created' in kube_deployment_out.stdout"
 
 - name: Ensure JQ package is available.
   package:
     name: jq
     state: present
-
+  become: true
     
 # kubectl get pods -o json | jq '.items[].status.phase'
 # kubectl get deployment mediawiki-kube -o json | jq '.status.conditions[].type'
@@ -36,7 +45,7 @@
   shell: kubectl rollout status deployment/{{kube_deployment}}
 
 - name: Expose Deployment via LoadBalancer.
-  shell: kubectl expose deployment {{kube_deployment}} --type="NodePort"
+  shell: kubectl expose deployment {{kube_deployment}} --type="LoadBalancer"
 
 - name: Show details of the {{kube_deployment}} service.
   shell: kubectl get service {{kube_deployment}}

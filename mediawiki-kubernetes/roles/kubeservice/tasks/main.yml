@@ -1,40 +1,8 @@
-    # first check if pods are there.
-
-    # if not proceed.
-
-    # create secret using docker-login data as follows.
-
-    # kubectl create secret docker-registry regcred --docker-server=https://006475447375.dkr.ecr.us-east-1.amazonaws.com \
-    # --docker-username=AWS \
-    # --docker-password=SNIPSNIPSNIPphMkdxT2J5Rm5XcHgwUWlnc0RWMnJqaXVpY3JpRXg0QXdkYkJTNUVaT21USml1Z2UwQSswYnJ6R3ZJdlUrWkE9PSIsImRhdGFrZXkiOiJBUUVCQUhod20wWWFJU0plUnRKbTVuMUc2dXFlZWtYdW9YWFBlNVVGY2U5UnE4LzE0d0FBQUg0d2ZBWUpLb1pJaHZjTkFRY0dvRzh3YlFJQkFEQm9CZ2txaGtpRzl3MEJCd0V3SGdZSllJWklBV1VEQkFFdU1CRUVETVg0d0pwYmxKZFh1MmlJendJQkVJQTdod3V4bWM3NnBmbCtyWGNEWnZhdVJraTVuY2ExTWt2VlFoQnNPd3FVTzlzcHJjNXpMVDNRS3d0S3duMlovNGpYUVo0bUZzYUppZFI4bUJRPSIsInZlcnNpb24iOiISNIPSNIPSNIP=
-
-    # template out the following file
-#
-#     apiVersion: v1
-# kind: Pod
-# metadata:
-#   name: mediawiki-kube
-# spec:
-#   containers:
-#   - name: mediawiki-kube-container
-#     image: 006475447375.dkr.ecr.us-east-1.amazonaws.com/savishy/mwapp:1.0
-#   imagePullSecrets:
-#   - name: regcred
-
-#  then run kubectl create -f on the file.
-    
-
 ---
-- block:
-        
-  - name: Get existing Kubernetes deployments.
-    shell: kubectl get deployments
-    changed_when: false
-    register: kube_deployments
+- name: Get existing Kubernetes deployments.
+  shell: kubectl get deployments
+  changed_when: false
+  register: kube_deployments
 
-  - include_tasks: deploy.yml
-    when: kube_deployment not in kube_deployments.stdout
-
-  run_once: true
-  become: true
-  delegate_to: '{{groups["tag_Name_mw"][0]}}'
+- include_tasks: deploy.yml
+  when: kube_deployment not in kube_deployments.stdout

@@ -13,7 +13,7 @@
 
       
 - name: Deploy the app on Kubernetes cluster.
-  hosts: tag_Name_mw
+  hosts: localhost
   vars_files:
   - common_vars.yml
   roles:
