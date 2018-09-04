@@ -1,0 +1,20 @@
+---
+
+- name: Create worker nodes for the EKS cluster.
+  cloudformation:
+    stack_name: '{{eks_name}}-nodes'
+    state: present
+    region: '{{ec2_region}}'
+    template_body: "{{ lookup('template', 'amazon-eks-nodegroup.yaml') }}"
+    template_parameters:
+      ClusterName: '{{eks_name}}'
+      NodeInstanceType: t2.medium
+      NodeGroupName: '{{eks_name}}-nodegroup'
+      NodeImageId: ami-0b2ae3c6bda8b5c06
+      NodeAutoScalingGroupMinSize: 2
+      NodeAutoScalingGroupMaxSize: 2
+      KeyName: '{{vault_ec2_keypair_name}}'
+      Subnets: "{{eks_vpc_out.stack_outputs.SubnetIds}}"
+      VpcId: '{{eks_vpc_out.stack_outputs.VpcId}}'
+      ClusterControlPlaneSecurityGroup: '{{eks_vpc_out.stack_outputs.SecurityGroups}}'
+  register: eks_node_out

@@ -1,0 +1,10 @@
+---
+eks_name: mweks
+eks_vpc_stack_name: mw-eks-vpc
+eks_iam_role: 'arn:aws:iam::006475447375:role/eksServiceRole'
+eks_vpc_block: 10.111.40.0/24
+eks_subnet1_block: 10.111.40.0/27
+eks_subnet2_block: 10.111.40.32/27
+eks_subnet3_block: 10.111.40.64/27
+kubeconfig_dir: /home/{{lookup('env','USER')}}/.kube
+

@@ -1,0 +1,30 @@
+---
+- block:
+  - name: Add Kubectl GPG key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+  - name: Add Kubernetes Apt Repo.
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+  - name: Install Kubectl from Apt Repo.
+    package:
+      name: kubectl
+      state: present
+  become: true
+
+- name: Verify Kubectl
+  shell: kubectl version --short --client
+  changed_when: false
+
+- name: Install aws-ia-authenticator
+  get_url:
+    url: https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator
+    dest: /usr/bin/aws-iam-authenticator
+    mode: 0755
+  become: true
+
+- name: Verify aws-iam-authenticator
+  shell: aws-iam-authenticator help
+  changed_when: false
