@@ -1,40 +1,50 @@
-# MediaWiki
-Load-balanced MediaWiki instance on Kubernetes on AWS.
+# MediaWiki on Kubernetes on AWS
 
-## Tools Used
+This directory contains an end-to-end provisioner for a Load-balanced MediaWiki instance on Kubernetes on AWS.
+
+## Architecture
+
+Two instances of MediaWiki in a Kubernetes cluster with a common instance of MySQL Database.
+
+![image](https://user-images.githubusercontent.com/13379978/45090003-a3865500-b12b-11e8-89d2-67b40db57e9a.png)
 
 
-| Tool | Notes |
-|-|-|
-| AWS | Cloud Technology |
-| Ansible 2.5.x | Overall Controller.<br>Controller Machine is my Windows 10 laptop and Ansible is running on Windows Subsystem for Linux. |
-| Docker 18 | Containerization |
-| AWS ECR | Container Registry |
-| MySQL 5.7 | Runs within a Docker container. |
-| MediaWiki 1.31.0 | Runs within a Docker container. |
+## Technology Stack
+
+| Item | Technology | Notes |
+|-|-|-|
+| Database | MySQL in a Docker Container on an EC2 `t2.medium` instance | Uses a customized MySQL Docker Image with the MediaWiki Database Schema pre-loaded. |
+| MediaWiki | MediaWiki in a Docker Container as a Kubernetes service. | Uses a customized MediaWiki image with MediaWiki "installed" i.e ready for use. |
+| Automation Tool | Ansible 2.5.x, Docker and `kubectl` on an EC2 `t2.small` instance. | Overall Controller |
+| Container Registry | ECS Repositories | |
 
 ## Prerequisites
 
-1. Windows 10 1706+ (_this playbook has been tested working on Windows Subsystem for Linux_).
 1. Ansible 2.5.x on Ubuntu 16.04.
 1. AWS Account and environment variables configured as appropriate.
 1. AWS Keypair stored locally.
+1. Ansible Vault Password (provided on request)
 
 ## How to run
 
-Run the playbooks in order i.e.
+### Download Prerequisites (one-time action)
 
-`ansible-playbook -vvv --ask-vault-pass -i inventories/dev/ <PLAYBOOK>.yml -e ansible_ssh_private_key_file=/path/to/keypair.pem`
+```
+ansible-galaxy install -r requirements.yml
+```
 
-Replace `PLAYBOOK` with the playbooks to be run.
+### Load Environment Variables (one-time action per terminal session)
 
-_Note: you can also run the playbooks all at once if required but I have not validated this._
+```
+export AWS_ACCESS_KEY=<something>
+export AWS_SECRET_KEY=<something>
+export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
+export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY
+```
 
-| Task | Playbook |
-|-|-|
-| Create EC2 instances | `0vms.yml` |
-| Setup prereqs, Create DB and MediaWiki instances. | `1apps.yml` |
-| Create ECR | `createecr.yml`|
+### Run the playbook
+
+`ansible-playbook -vvv --ask-vault-pass -i inventories/dev/ playbook.yml -e ansible_ssh_private_key_file=/path/to/keypair.pem`
 
 ## Overall Flow
 
