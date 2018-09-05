@@ -2,11 +2,21 @@
 
 This directory contains an end-to-end provisioner for a Load-balanced MediaWiki instance on Kubernetes on AWS.
 
+![capture](https://user-images.githubusercontent.com/13379978/45091084-f6154080-b12e-11e8-92b5-7f3b3854302c.PNG)
+
+## Features
+
+* :heavy_check_mark: Infrastructure is disposable and fully-automated.
+* :heavy_check_mark: MediaWiki instances come up pre-installed and pre-configured with access to DB. One admin user is also pre-created.
+* :heavy_check_mark: MediaWiki instances are load-balanced through a Kubernetes service.
+* :heavy_check_mark: MediaWiki connects to Database using a Kubernetes Service. In other words, connection to the DB is independent of DB IP address or hostname.
+
 ## Architecture
 
 Two instances of MediaWiki in a Kubernetes cluster with a common instance of MySQL Database.
 
-![image](https://user-images.githubusercontent.com/13379978/45090003-a3865500-b12b-11e8-89d2-67b40db57e9a.png)
+
+<img src="https://user-images.githubusercontent.com/13379978/45090003-a3865500-b12b-11e8-89d2-67b40db57e9a.png" alt="architecture" width="500"/>
 
 
 ## Technology Stack
@@ -18,20 +28,22 @@ Two instances of MediaWiki in a Kubernetes cluster with a common instance of MyS
 | Automation Tool | Ansible 2.5.x, Docker and `kubectl` on an EC2 `t2.small` instance. | Overall Controller |
 | Container Registry | ECS Repositories | |
 
-## Prerequisites
+
+## How to run
+
+### Prerequisites
 
 1. Ansible 2.5.x on Ubuntu 16.04.
 1. AWS Account and environment variables configured as appropriate.
-1. AWS Keypair stored locally.
+1. AWS Keypair PEM file stored locally.
 1. Ansible Vault Password (provided on request)
-
-## How to run
 
 ### Download Prerequisites (one-time action)
 
 ```
 ansible-galaxy install -r requirements.yml
 ```
+
 
 ### Load Environment Variables (one-time action per terminal session)
 
@@ -42,11 +54,24 @@ export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
 export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY
 ```
 
+### Create ECS Registries (one-time action)
+
+```
+`ansible-playbook -vvv --ask-vault-pass -i inventories/dev/ createecr.yml -e ansible_ssh_private_key_file=/path/to/keypair.pem`
+```
+
 ### Run the playbook
 
 `ansible-playbook -vvv --ask-vault-pass -i inventories/dev/ playbook.yml -e ansible_ssh_private_key_file=/path/to/keypair.pem`
 
-## Overall Flow
+This asks you for the vault password, type that in. 
+
+## Implementation Details
+
+A High Level Overview Diagram: 
+
+<img src="https://user-images.githubusercontent.com/13379978/45088507-cfeba280-b126-11e8-8ac0-09be1965d83e.png" alt="implementation flow" width="500"/>
+
 
 1. Create Docker Image for MediaWiki using Ansible-managed Dockerfile.
 1. Push to AWS Elastic Container Registry.
