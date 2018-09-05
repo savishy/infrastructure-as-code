@@ -8,6 +8,3 @@ mysql_db_name: mwdatabase
 # mediawiki mysql user. password is vault_mysql_pass
 mysql_db_user: mwiki
 
-# user account for docker
-docker_user: '{{ansible_user}}'
-docker_api_port: 2375

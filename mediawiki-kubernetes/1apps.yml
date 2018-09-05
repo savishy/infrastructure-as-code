@@ -7,36 +7,35 @@
 # Ansible run through WSL tries to use Ohai to locate localhost facts, which I don't want.
 # So I disabled gather_facts for localhost.
 
-- name: Ensure prerequisites on localhost.
+- name: Ensure prerequisites and install Docker on localhost.
   hosts: localhost
   connection: local
-  gather_facts: false
   vars_files:
   - common_vars.yml
   roles:
   - prereqs
+  - ansible-roles/install-docker
   tags: always
 
-- name: Ensure prerequisites on EC2 instances.
-  hosts: all
+- name: Ensure prerequisites on DB EC2 Instance.
+  hosts: tag_Name_mysql
   vars_files:
   - common_vars.yml
   roles:
-  - {role: ansible-roles/install-docker, tags: docker}
-  tags: docker
+  - ansible-roles/install-docker
 
-- name: Create a DB Docker Image, Push to ECR and run a container initialized with MediaWiki Schema.
+- name: Create DB and MW Docker Images, Push to ECR
+  hosts: localhost
+  connection: local
+  vars_files:
+  - common_vars.yml
+  roles:
+  - images
+  tags: images
+
+- name: Create DB Docker Container.
   hosts: tag_Name_mysql
   vars_files:
   - common_vars.yml
   roles:
   - db
-  tags: db
-
-- name: Create MediaWiki Docker image, push to ECR and run a container pre-initialized with config.
-  hosts: tag_Name_mw
-  vars_files:
-  - common_vars.yml
-  roles:
-  - mw-image
-  tags: mw
