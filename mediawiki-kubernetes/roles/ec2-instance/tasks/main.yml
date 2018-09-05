@@ -1,27 +1,44 @@
 ---
 
+- name: Ensure SG {{ec2_group_id}} has rules to allow SSH from controller IP and allows outbound traffic.
+  include_role:
+    name: common
+    tasks_from: update-sg-rules
+  vars:    
+    ec2_group_inbound_rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: '{{my_ip}}/32'
+        rule_desc: Allow SSH from Controller
+      - proto: tcp
+        from_port: 3306
+        to_port: 3306
+        cidr_ip: '0.0.0.0/0'
+        rule_desc: Allow MySQL Connections
+    ec2_group_outbound_rules:
+      - proto: all
+        from_port: 65535
+        to_port: 65535
+        cidr_ip: '0.0.0.0/0'
+        rule_desc: Allow outgoing traffic
+
 - block:
-  - name: get EC2 AMI ID
-    ec2_ami_facts:
-      owner: "{{ec2_ubuntu_owner}}"
-      region: "{{ec2_region}}"
-      filters:
-        architecture: x86_64
-        name: '{{ec2_ubuntu_ami_name}}'
-    register: ec2_ami_details
-  - set_fact: ec2_ami_id={{ec2_ami_details.images[0].image_id}}
-  - debug: var=ec2_ami_id
+    - name: get EC2 AMI ID
+      ec2_ami_facts:
+        owner: "{{ec2_ubuntu_owner}}"
+        region: "{{ec2_region}}"
+        filters:
+          architecture: x86_64
+          name: '{{ec2_ubuntu_ami_name}}'
+      register: ec2_ami_details
+    - set_fact: ec2_ami_id={{ec2_ami_details.images[0].image_id}}
+    - debug: var=ec2_ami_id
   tags: ami
 
-- block:
-  - name: get ec2 group details
-    ec2_group_facts:
-      region: "{{ec2_region}}"
-      filters:
-        group-name: "{{ec2_group_name}}"
-    register: ec2_group_details
-
-  - include_tasks: createinstance.yml vm_name={{item.key}} vm_details={{item.value}}
-    with_dict: "{{vms}}"
-
+- include_tasks: createinstance.yml vm_name={{item.key}} vm_details={{item.value}}
+  with_dict: "{{vms}}"
   tags: instance
+
+- name: Retrieve the IP for MySQL instance.
+  set_fact: mysql_db_host={{ec2_created_details.instances[0].public_ip}}

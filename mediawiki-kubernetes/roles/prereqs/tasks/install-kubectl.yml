@@ -1,4 +1,3 @@
----
 - block:
   - name: Add Kubectl GPG key
     apt_key:

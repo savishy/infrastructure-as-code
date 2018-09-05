@@ -6,3 +6,20 @@
 
 - include_tasks: deploy.yml
   when: kube_deployment not in kube_deployments.stdout
+
+- name: Retrieve load-balancer address. Wait until it is available.
+  shell: kubectl get service {{kube_deployment}} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+  register: kube_lb_addr
+  until: kube_lb_addr.stdout | length > 0
+  timeout: 120
+  delay: 10
+  sleep: 10
+
+- name: Wait for LB address to be available.
+  uri:
+    url: '{{kube_lb_addr.stdout}}'
+    status_code: 200
+  register: lb_result
+  until: lb_result.status == 200
+  retries: 10
+  delay: 30

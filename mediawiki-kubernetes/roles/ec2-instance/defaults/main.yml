@@ -12,4 +12,5 @@ public_ip: true
 user_data: |
   #!/bin/bash
   apt-get update -qqy
-  apt-get install -y python python-pip
+  apt-get install -qy python-minimal
+  apt-get install -qy python-pip

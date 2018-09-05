@@ -1,0 +1,36 @@
+---
+
+# - name: Retrieve the IP for MySQL instance to use in Dockerfile build.
+#   set_fact: mysql_db_host={{hostvars[ groups['tag_Name_mysql'][0] ]['ec2_private_ip_address']}}
+
+- fail: msg="mysql_db_host is not set to the DB IP address"
+  when: mysql_db_host is undefined or mysql_db_host|length == 0
+
+- name: Create workspace for Docker build.
+  tempfile:
+    state: directory
+  register: temp_docker_ws
+
+- name: Template out the files to Docker workspace.
+  template:
+    src: '{{item}}'
+    dest: '{{temp_docker_ws.path}}'
+  with_items:
+  - LocalSettings.php
+  - Dockerfile.mw
+
+- name: Include task to execute ECR Login.
+  include_role:
+    name: common
+    tasks_from: ecr-login
+
+- name: Build a MediaWiki Docker Image and push it to ECR.
+  docker_image:
+    name: '{{ecr_repo_url_app}}'
+    tag: '{{mw_app_ver}}'
+    path: '{{temp_docker_ws.path}}'
+    push: yes
+    dockerfile: Dockerfile.mw
+      
+  # php /var/www/html/maintenance/install.php --conf /var/www/html/
+  # Usage: php install.php [--conf|--confpath|--dbname|--dbpass|--dbpassfile|--dbpath|--dbport|--dbprefix|--dbschema|--dbserver|--dbtype|--dbuser|--env-checks|--globals|--help|--installdbpass|--installdbuser|--lang|--memory-limit|--mwdebug|--pass|--passfile|--profiler|--quiet|--scriptpath|--server|--wiki|--with-extensions] [name] <admin>

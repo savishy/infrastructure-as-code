@@ -1,53 +1,11 @@
 ---
 
-# IAM Role must be created prior.
+# TODO IAM Role must be created prior to this role. Can be automated.
 # Guide https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
 # https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-vpc-sample    
 
 - include_tasks: createvpc.yml
-- include_tasks: installtools.yml
 - include_tasks: createcluster.yml
 - include_tasks: configurekube.yml  
-
-
-- name: Create Kubernetes Dashboard. This is automatically declarative.
-  shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
-  register: eks_dashboard_out
-  changed_when: "'created' in eks_dashboard_out.stdout"
-
-- name: Create Kubernetes dashboard admin user config file.
-  copy:
-    dest: /tmp/eks_admin_serviceaccount.yml
-    content: |
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: eks-admin
-        namespace: kube-system
-
-- name: Create Kubernetes dashboard cluster role binding config file.
-  copy:
-    dest: /tmp/eks_admin_clusterrolebinding.yml
-    content: |
-      apiVersion: rbac.authorization.k8s.io/v1beta1
-      kind: ClusterRoleBinding
-      metadata:
-        name: eks-admin
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: cluster-admin
-      subjects:
-      - kind: ServiceAccount
-        name: eks-admin
-        namespace: kube-system
-    
-- name: Create Kubernetes dashboard admin user.
-  shell: |
-    kubectl apply -f /tmp/eks_admin_serviceaccount.yml
-    kubectl apply -f /tmp/eks_admin_clusterrolebinding.yml
-  register: eks_admin_user_out
-  changed_when: "'created' in eks_admin_user_out.stdout"
-
-- name: Create Kubernetes nodes.
-  include_tasks: createnodes.yml
+- include_tasks: createdashboard.yml
+- include_tasks: createnodes.yml

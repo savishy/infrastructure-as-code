@@ -54,7 +54,7 @@ $wgEmailAuthentication = true;
 
 ## Database settings
 $wgDBtype = "mysql";
-$wgDBserver = "{{kube_mw_db_service}}";
+$wgDBserver = "{{mysql_db_host}}";
 $wgDBname = "{{mysql_db_name}}";
 $wgDBuser = "{{mysql_db_user}}";
 $wgDBpassword = "{{vault_mysql_pass}}";

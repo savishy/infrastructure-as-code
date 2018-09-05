@@ -15,5 +15,5 @@
   with_items:
   - mwdbexternal_service.yml
   - mwdbexternal_endpoint.yml
+  ignore_errors: true
 
-- fail: msg=foo

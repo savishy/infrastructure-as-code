@@ -29,5 +29,9 @@
   shell: kubectl apply -f /tmp/aws-auth-cm.yml
 
 - name: Wait until nodes are ready
-  shell: kubectl get nodes --watch
+  shell: kubectl get nodes
+  register: eks_nodes_status_out
+  until: "'Ready' in eks_nodes_status_out.stdout"
+  retries: 20
+  delay: 30
   
