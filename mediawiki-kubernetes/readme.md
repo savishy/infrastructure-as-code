@@ -72,13 +72,28 @@ A High Level Overview Diagram:
 
 <img src="https://user-images.githubusercontent.com/13379978/45088507-cfeba280-b126-11e8-8ac0-09be1965d83e.png" alt="implementation flow" width="500"/>
 
+### Kubernetes on AWS
 
-1. Create Docker Image for MediaWiki using Ansible-managed Dockerfile.
-1. Push to AWS Elastic Container Registry.
+1. Note: I initially proceeded with referring to Jeff Geerling's role `geerlingguy.kubernetes` for the Kubernetes provisioning. However, I had trouble resolving DNS from within the pods. As a result I switched to provisioning a cluster on EKS.
+1. For EKS provisioning, I essentially automated the steps provided in the [official getting-started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) using a mix of
+   1. Ansible
+   1. Ansible's CloudFormation modules and CloudFormation Templates provided from the above link
+   1. `kubectl`
 
-## Key Points
+### MediaWiki 
 
-**Variable Structure**:
+1. With constraints of time I made the conscious choice to use the official MediaWiki Docker Image.
+
+### MySQL DB
+
+1. I used the official MySQL DB Image.
+
+### 
+
+
+## Known Issues
+
+### Variable Structure
 
 1. Environment-independent data is stored in role defaults, and environment-dependent data goes into `inventories/<env>/`.
 1. Secrets are environment-specific and stored in `inventories/<env>/group_vars/all/vault.yml`.
