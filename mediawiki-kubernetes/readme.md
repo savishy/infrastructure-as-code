@@ -72,21 +72,39 @@ A High Level Overview Diagram:
 
 <img src="https://user-images.githubusercontent.com/13379978/45088507-cfeba280-b126-11e8-8ac0-09be1965d83e.png" alt="implementation flow" width="500"/>
 
-### Kubernetes on AWS
+### Kubernetes provisioning on AWS
 
-1. Note: I initially proceeded with referring to Jeff Geerling's role `geerlingguy.kubernetes` for the Kubernetes provisioning. However, I had trouble resolving DNS from within the pods. As a result I switched to provisioning a cluster on EKS.
-1. For EKS provisioning, I essentially automated the steps provided in the [official getting-started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) using a mix of
+Ansible role: [`kube-eks`](roles/kube-eks). The role creates a VPC and Subnets, creates an EKS Cluster and 2 nodes.
+
+1. I referred to the steps provided in the [official getting-started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and automated them using a mix of
    1. Ansible
    1. Ansible's CloudFormation modules and CloudFormation Templates provided from the above link
    1. `kubectl`
 
-### MediaWiki 
+Note: I initially referenced Jeff Geerling's role `geerlingguy.kubernetes` for the Kubernetes provisioning. However, I had trouble resolving DNS from within the pods. As a result I switched to provisioning a cluster on EKS.
 
-1. With constraints of time I made the conscious choice to use the official MediaWiki Docker Image.
+**Access to external DB from Kubernetes Cluster**
 
-### MySQL DB
+I created a Kubernetes Service and endpoint that points to the DB.
 
-1. I used the official MySQL DB Image.
+:bulb: This allows Kubernetes pods to use the service name to access the DB (instead of its IP) i.e MediaWiki does not need to use the DB IP to access the database :+1:
+
+### MediaWiki and MySQL DB Images
+
+Ansible role: [`images`](roles/images). This role creates images for MediaWiki and MySQL DB and pushes them to the ECS Registry.
+
+1. With constraints of time, I chose to use the official MediaWiki and MySQL Docker Image as my base image.
+1. The official image still requires one to perform "installation" or "initial setup". 
+
+To achieve the objective of a ready-to-go MediaWiki:
+
+1. I first "manually" ran a MediaWiki container connected to a MySQL container on the same Docker network.
+1. After performing initial setup I extracted the `LocalSettings.php` from MediaWiki and a `mysqldump` of the MySQL MediaWiki DB. These are stored as templates in Ansible.
+1. I then wrote the playbook to manage creation of 
+   1. A MediaWiki image which has the `LocalSettings.php` preloaded with connection to the DB;
+   1. A MySQL image with the DB schema baked in.
+
+:bulb: The MediaWiki `LocalSettings.php` references the DB using the DNS Name of the Kubernetes DB Service. This helps us keep the image immutable.
 
 ### 
 
