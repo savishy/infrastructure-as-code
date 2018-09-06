@@ -1,6 +1,4 @@
 ---
-- include_tasks: createloginsecret.yml
-- include_tasks: createdbservice.yml
   
 - name: Generate Kubernetes Pod Config file.
   template:

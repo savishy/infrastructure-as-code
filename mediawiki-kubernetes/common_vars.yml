@@ -2,7 +2,7 @@
 # Elastic Container Registry Details
 mw_app_name: mwapp
 mw_db_name: mwdb
-mw_app_ver: 1.6
+mw_app_ver: 1.7
 mw_db_ver: 1.0
 ecr_repo_root: '006475447375.dkr.ecr.us-east-1.amazonaws.com'
 
@@ -43,3 +43,10 @@ my_ip: "{{lookup('url','http://ipinfo.io/ip')}}"
 
 # Kubernetes DB Service is called this. Allows kube services to access external services.
 kube_mw_db_service: mwdbexternal
+
+# EKS Cluster Name
+eks_name: mweks
+# Cloud formation stack name
+eks_vpc_stack_name: mw-eks-vpc
+# IAM Role to use for EKS 
+eks_iam_role: 'arn:aws:iam::006475447375:role/eksServiceRole'

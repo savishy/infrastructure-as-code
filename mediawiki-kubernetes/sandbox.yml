@@ -2,18 +2,13 @@
 - name: Install Kubernetes.
   hosts: localhost
   connection: local
-  gather_facts: false
   vars_files:
   - common_vars.yml
 
   tasks:
-  - name: Create an EKS cluster
-    aws_eks_clusterddddd: my_cluster
-      role_arn: my_eks_role
-      subnets:
-      - subnet-aaaa1111
-      security_groups:
-      - my_eks_sg
-      - sg-abcd1234
-      register: caller_facts
- 
+  - ec2_group_facts:
+      filters:
+        group-name: 'mweks-nodes*'
+        "tag:aws:cloudformation:stack-name": "mweks-nodes"
+    register: f
+  - debug: var=f.security_groups[0].group_id

@@ -1,5 +1,14 @@
 ---
 
+- name: Retrieve facts about SG for Kubernetes Nodes.
+  ec2_group_facts:
+    filters:
+      group-name: '{{eks_name}}-nodes*'
+      "tag:aws:cloudformation:stack-name": "{{eks_name}}-nodes"
+  register: eks_node_sg_facts
+- set_fact: eks_node_sg_id={{eks_node_sg_facts.security_groups[0].group_id}}
+
+
 - name: Ensure SG {{ec2_group_id}} has rules to allow SSH from controller IP and allows outbound traffic.
   include_role:
     name: common
@@ -14,8 +23,8 @@
       - proto: tcp
         from_port: 3306
         to_port: 3306
-        cidr_ip: '0.0.0.0/0'
-        rule_desc: Allow MySQL Connections
+        group_id: '{{eks_node_sg_id}}'
+        rule_desc: Allow MySQL Connections from Node SG
     ec2_group_outbound_rules:
       - proto: all
         from_port: 65535

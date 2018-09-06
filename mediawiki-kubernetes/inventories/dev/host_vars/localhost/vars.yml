@@ -2,6 +2,10 @@
 
 env: dev
 
+# a dict containing details of the instances to create.
+# since MW instances are managed by CloudFormation there is only
+# one item at present.
+
 vms:
   db:
     instance_type: t2.medium
@@ -21,3 +25,9 @@ vms:
 
 client_tokens:
   db: 49ce34abcdc516226
+
+# VPC Block and Subnet Blocks. These would be different per environment.
+eks_vpc_block: 10.111.40.0/24
+eks_subnet1_block: 10.111.40.0/27
+eks_subnet2_block: 10.111.40.32/27
+eks_subnet3_block: 10.111.40.64/27
