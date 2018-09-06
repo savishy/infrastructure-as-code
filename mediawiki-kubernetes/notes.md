@@ -58,3 +58,22 @@ This error was because:
 * For tasks that get skipped, the `register` stores the output `skipped`.
 * This corrupts the `kubernetes_join_command` variable and the node fails to join the kubernetes cluster.
 * Relevant issue https://github.com/ansible/ansible/issues/4297
+
+### Tips to troubleshoot external DB Connectivity
+
+```
+# run a ubuntu pod in the cluster.
+kubectl run -i --tty ubuntu --image=ubuntu -- bash
+
+# 
+
+root@ubuntu-84bf685985-592gc:/# apt update -qqy  && apt install -y netcat
+Setting up netcat (1.10-41.1) ...
+root@ubuntu-84bf685985-592gc:/# nc -z mwdbexternal 3306
+^C
+root@ubuntu-84bf685985-592gc:/# nc -z 10.111.40.92 3306
+root@ubuntu-84bf685985-592gc:/# nc -z -v -w5 10.111.40.92 3306
+ip-10-111-40-92.ec2.internal [10.111.40.92] 3306 (?) open
+root@ubuntu-84bf685985-592gc:/# nc -z -v -w5 54.82.147.250 3306
+ec2-54-82-147-250.compute-1.amazonaws.com [54.82.147.250] 3306 (?) : Connection timed out
+```
