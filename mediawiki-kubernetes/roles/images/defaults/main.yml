@@ -1,0 +1,4 @@
+mw_site_name: devopsyness
+mw_site_namespace: Devopsyness
+mw_host_port: 8080
+mw_url: 'http://localhost:{{mw_host_port}}'

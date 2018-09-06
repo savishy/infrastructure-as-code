@@ -1,0 +1,15 @@
+---
+# This task is for hosts that need to push images to ECR.
+# It merely executes the ECR login command.
+
+# The AWS ECR login token is generated on localhost.
+# To use this on the EC2 hosts we need to try to retrieve
+# that fact from hostvars on localhost.
+
+- name: Fail if AWS ECR Login Token generated on localhost is empty.
+  fail:
+    msg: Could not find variable that contains ECR Login command!
+  when: hostvars['localhost']['aws_ecr_login'] is not defined or hostvars['localhost']['aws_ecr_login']|length == 0
+
+- name: Execute ECR Login.
+  shell: "{{hostvars['localhost']['aws_ecr_login']}}"

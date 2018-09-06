@@ -1,0 +1,3 @@
+---
+- include_tasks: install-awscli.yml
+- include_tasks: install-kubectl.yml

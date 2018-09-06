@@ -1,0 +1,41 @@
+---
+  
+- name: Generate Kubernetes Pod Config file.
+  template:
+    src: deployconfig.yml
+    dest: '{{kube_config_path}}'
+
+- name: Create Kubernetes Deployment from Config.
+  shell: kubectl create -f {{kube_config_path}}
+  register: kube_deployment_out
+  changed_when: "'created' in kube_deployment_out.stdout"
+
+- name: Ensure JQ package is available.
+  package:
+    name: jq
+    state: present
+  become: true
+    
+# kubectl get pods -o json | jq '.items[].status.phase'
+# kubectl get deployment mediawiki-kube -o json | jq '.status.conditions[].type'
+
+- name: Wait for deployment to report available.
+  shell: kubectl get deployment {{kube_deployment}}  -o json | jq '.status.conditions[].type'
+  register: result
+  until: result.stdout.find("Available") != -1
+  retries: 5
+  delay: 10
+
+
+- name: Display Rollout Status. The command waits until the rollout is finished.
+  shell: kubectl rollout status deployment/{{kube_deployment}}
+
+- name: Expose Deployment via LoadBalancer.
+  shell: kubectl expose deployment {{kube_deployment}} --type="LoadBalancer"
+
+- name: Show details of the {{kube_deployment}} service.
+  shell: kubectl get service {{kube_deployment}}
+
+- name: Print the exposed port which is in range 30000-32767.
+  shell: kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services {{kube_deployment}}
+

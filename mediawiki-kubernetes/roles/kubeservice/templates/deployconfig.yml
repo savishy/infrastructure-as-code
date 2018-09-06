@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{kube_deployment}}'
+  labels:
+    app: '{{kube_label}}'
+spec:
+  replicas: {{kube_replicas}}
+  selector:
+    matchLabels:
+      app: '{{kube_label}}'
+  template:
+    metadata:
+      labels:
+        app: '{{kube_label}}'
+    spec:
+      containers:
+      - name: '{{kube_container}}'
+        image: '{{ecr_repo_url_app}}:{{mw_app_ver}}'
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: '{{kube_secret}}'

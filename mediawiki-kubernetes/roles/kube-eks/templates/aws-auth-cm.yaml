@@ -1,0 +1,14 @@
+# Escaping double curly braces:
+# https://stackoverflow.com/a/32283447
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: {{eks_node_out.stack_outputs.NodeInstanceRole}}
+      username: system:node:{{'{{'}}EC2PrivateDNSName{{'}}'}}
+      groups:
+        - system:bootstrappers
+        - system:nodes

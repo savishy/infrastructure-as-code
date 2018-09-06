@@ -1,0 +1,3 @@
+---
+kubeconfig_dir: /home/{{lookup('env','USER')}}/.kube
+

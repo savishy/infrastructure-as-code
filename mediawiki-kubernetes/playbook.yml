@@ -1,0 +1,71 @@
+---
+- name: Install prereqs on localhost and create a Kubernetes cluster on EKS.
+  hosts: localhost
+  connection: local
+  vars_files:
+  - common_vars.yml
+  roles:
+  - prereqs
+  - ansible-roles/install-docker
+  - kube-eks
+  
+  post_tasks:
+  - debug:
+      msg: |
+        Security Group - {{eks_vpc_out.stack_outputs.SecurityGroups}}
+        Subnet IDs - {{eks_vpc_out.stack_outputs.SubnetIds}}
+        VPC ID - {{eks_vpc_out.stack_outputs.VpcId}}
+        
+  - name: Convert Subnets to list.
+    set_fact:
+      eks_vpc_out_list: "{{ eks_vpc_out.stack_outputs.SubnetIds.split(',') | list }}"
+
+  - name: Set facts of created VPC for use in DB instance creation.
+    set_fact:
+      ec2_vpc_id: '{{eks_vpc_out.stack_outputs.VpcId}}'
+      ec2_subnets:
+        db:
+          cidr: '{{eks_vpc_out_list[2]}}'
+      ec2_group_id: '{{eks_vpc_out.stack_outputs.SecurityGroups}}'
+      
+  tags: prereqs,eks
+  
+- name: Create EC2 Instances for MediaWiki DB.
+  hosts: localhost
+  connection: local
+  vars_files:
+  - common_vars.yml
+  roles:
+  - ec2-instance
+  tags: instance
+
+- name: Install Docker on DB instance.
+  hosts: db
+  vars_files:
+  - common_vars.yml
+  roles:
+  - ansible-roles/install-docker
+
+- name: Create DB and MW Docker Images, Push to ECR
+  hosts: localhost
+  connection: local
+  vars_files:
+  - common_vars.yml
+  roles:
+  - images
+  tags: images
+
+- name: Create DB Docker Container.
+  hosts: db
+  vars_files:
+  - common_vars.yml
+  roles:
+  - db
+      
+- name: Deploy the app on Kubernetes cluster.
+  hosts: localhost
+  vars_files:
+  - common_vars.yml
+  roles:
+  - kubeservice
+  tags: deploy

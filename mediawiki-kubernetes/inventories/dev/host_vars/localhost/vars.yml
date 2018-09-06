@@ -1,0 +1,33 @@
+---
+
+env: dev
+
+# a dict containing details of the instances to create.
+# since MW instances are managed by CloudFormation there is only
+# one item at present.
+
+vms:
+  db:
+    instance_type: t2.medium
+    idempotent_token: "{{client_tokens.db}}"
+    count: 1
+    cidr: "{{ec2_subnets.db.cidr}}"
+    tags:
+      Name: mysql
+      env: '{{env}}'
+      Desc: MySQL Server
+
+# For details of token, see
+# https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html
+# CLient Token is used to pass the idempotent token as well as decide the instance ID.
+# Note - Longer 17-char instance IDs used.
+# Note - instance id format is i-[17 chars] where chars are 0-9 and a-f.
+
+client_tokens:
+  db: 49ce34abcdc516226
+
+# VPC Block and Subnet Blocks. These would be different per environment.
+eks_vpc_block: 10.111.40.0/24
+eks_subnet1_block: 10.111.40.0/27
+eks_subnet2_block: 10.111.40.32/27
+eks_subnet3_block: 10.111.40.64/27
