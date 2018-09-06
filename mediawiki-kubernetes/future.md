@@ -1,6 +1,7 @@
 # Known Issues & Future Improvements
 
 1. I need to create Inspec spec .rb files for each role. I also need to create a test engine which would pick up all the role-level specs and run automated validation as part of infra provisioning.
+1. Persistence for the database. Since I did not load any data (e.g Wiki Pages) into the DB this piece was missed out. But it can be easily accomplished via volume-mounting the `/var/lib/mysql` directory at container run-time for example.
 1. Instances like the DB should be created with private IP instead of a public IP. The Ansible controller can serve as a Jumphost to access them.
 1. The 2x MediaWiki instances, 1x DB and 1x Controller should be on the same VPC.
 1. Currently (due to time constraints) the DB instance joins the Control Group subnet. This requires a rule to allow communication on port 3306 between the Control Group and Node Group subnets. I need to join the DB instance to the Kubernetes NodeGroup SG and allow intra-SG communication (if not already enabled). This would allow easy communication via private IPs and avoid the extra code for the Control Group SG modification.
