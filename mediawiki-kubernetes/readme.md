@@ -106,16 +106,14 @@ To achieve the objective of a ready-to-go MediaWiki:
 
 :bulb: The MediaWiki `LocalSettings.php` references the DB using the DNS Name of the Kubernetes DB Service. This helps us keep the image immutable.
 
-### 
-
-
-## Known Issues
-
-### Variable Structure
+### Variables and Secrets
 
 1. Environment-independent data is stored in role defaults, and environment-dependent data goes into `inventories/<env>/`.
 1. Secrets are environment-specific and stored in `inventories/<env>/group_vars/all/vault.yml`.
 
+## Known Issues & Improvements
+
+Please take a look at [future.md](future.md).
 
 ## Notes, Tips and Gotchas
 
