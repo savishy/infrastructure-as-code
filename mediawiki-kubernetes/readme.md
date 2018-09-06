@@ -2,7 +2,11 @@
 
 This directory contains an end-to-end provisioner for a Load-balanced MediaWiki instance on Kubernetes on AWS.
 
+The end product looks like this: 
+
 ![capture](https://user-images.githubusercontent.com/13379978/45091084-f6154080-b12e-11e8-92b5-7f3b3854302c.PNG)
+
+The Kanban Board for this project can be found here: https://github.com/savishy/infrastructure-as-code/projects/1
 
 ## Features
 
@@ -109,7 +113,7 @@ To achieve the objective of a ready-to-go MediaWiki:
 ### Variables and Secrets
 
 1. Environment-independent data is stored in role defaults, and environment-dependent data goes into `inventories/<env>/`.
-1. Secrets are environment-specific and stored in `inventories/<env>/group_vars/all/vault.yml`.
+1. Secrets are environment-specific and stored in `vault.yml` files.
 
 ## Known Issues & Improvements
 
