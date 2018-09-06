@@ -1,9 +1,0 @@
----
-- hosts: localhost
-  connection: local
-  vars_files:
-  - common_vars.yml
-  roles:
-  - prereqs
-  - ansible-roles/install-docker
-  - kube-eks

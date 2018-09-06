@@ -14,18 +14,6 @@ ecr_repo_url_db: '{{ecr_repo_root}}/{{ecr_repo_name_db}}'
 # AWS region where all resources incl VPC and VMs will reside.
 ec2_region: us-east-1
 
-# geerlingguy.kubernetes ansible role configuration
-kubernetes_allow_pods_on_master: true
-kubernetes_enable_web_ui: true
-
-kubernetes_packages:
-  - name: kubelet
-    state: present
-  - name: kubeadm
-    state: present
-  - name: kubernetes-cni
-    state: present
-
 # usr account for ansible control
 ansible_user: ubuntu
 
