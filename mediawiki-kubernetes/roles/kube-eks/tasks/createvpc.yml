@@ -1,0 +1,16 @@
+- name: Create a VPC for the EKS cluster.
+  cloudformation:
+    stack_name: '{{eks_vpc_stack_name}}'
+    state: present
+    region: '{{ec2_region}}'
+    template_body: "{{ lookup('template', 'amazon-eks-vpc-sample.yaml') }}"
+    template_parameters:
+      VpcBlock: '{{eks_vpc_block}}'
+      Subnet01Block: '{{eks_subnet1_block}}'
+      Subnet02Block: '{{eks_subnet2_block}}'
+      Subnet03Block: '{{eks_subnet3_block}}'
+  register: eks_vpc_out
+        
+- debug: var=eks_vpc_out.stack_outputs.SecurityGroups
+- debug: var=eks_vpc_out.stack_outputs.SubnetIds
+- debug: var=eks_vpc_out.stack_outputs.VpcId

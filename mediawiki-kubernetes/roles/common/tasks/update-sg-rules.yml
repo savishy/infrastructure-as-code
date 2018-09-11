@@ -1,0 +1,18 @@
+- name: Validate that the SG exists.
+  ec2_group_facts:
+    filters:
+      group-id: "{{ec2_group_id}}"
+    region: "{{ec2_region}}"
+  register: ec2_group_details
+
+- name: Get controller IP
+  ipinfoio_facts:
+  register: ip_out
+
+- name: Update SG Rules.
+  ec2_group:
+    name: "{{ec2_group_details.security_groups[0].group_name}}"
+    description: "{{ec2_group_details.security_groups[0].description}}"
+    purge_rules: false
+    rules: '{{ec2_group_inbound_rules}}'
+    rules_egress: '{{ec2_group_outbound_rules}}'

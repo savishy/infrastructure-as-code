@@ -1,0 +1,28 @@
+- name: Create AWS Elastic Container Registry repositories in ECS.
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+  - common_vars.yml
+  tasks:
+  - name: create ECR repo.
+    ecs_ecr:
+      name: '{{item}}'
+      state: present
+      policy:
+        Version: '2008-10-17'
+        Statement:
+          - Sid: read-only
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action:
+              - ecr:ListImages
+              - ecr:DescribeRepositories
+              - ecr:GetRepositoryPolicy
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+    with_items:
+    - '{{ecr_repo_name_app}}'
+    - '{{ecr_repo_name_db}}'

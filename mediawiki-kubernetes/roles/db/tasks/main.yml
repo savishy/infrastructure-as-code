@@ -1,0 +1,17 @@
+---
+- name: Include task to login to ECR.
+  include_role:
+    name: common
+    tasks_from: ecr-login
+- name: Create a DB Docker container which initializes the MediaWiki DB.
+  docker_container:
+    name: '{{mw_db_name}}'
+    image: '{{ecr_repo_url_db}}:{{mw_db_ver}}'
+    state: started
+    ports:
+     - "3306:3306"
+    env:
+      MYSQL_ROOT_PASSWORD: '{{vault_mysql_root_pass}}'
+      MYSQL_USER: '{{mysql_db_user}}'
+      MYSQL_PASSWORD: '{{vault_mysql_pass}}'
+      MYSQL_DATABASE: '{{mysql_db_name}}'

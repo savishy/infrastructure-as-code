@@ -1,0 +1,26 @@
+---
+- name: Create temp workspace for Docker build.
+  tempfile:
+    state: directory
+  register: temp_docker_db_ws
+
+- name: Template out the files to Docker workspace.
+  template:
+    src: '{{item}}'
+    dest: '{{temp_docker_db_ws.path}}'
+  with_items:
+  - mwdatabase.sql
+  - Dockerfile.db
+
+- name: Include task to execute ECR Login.
+  include_role:
+    name: common
+    tasks_from: ecr-login
+
+- name: Build a MySQL DB Docker Image with MediaWiki DB initialization and push to ECR.
+  docker_image:
+    name: '{{ecr_repo_url_db}}'
+    tag: '{{mw_db_ver}}'
+    path: '{{temp_docker_db_ws.path}}'
+    push: yes
+    dockerfile: Dockerfile.db

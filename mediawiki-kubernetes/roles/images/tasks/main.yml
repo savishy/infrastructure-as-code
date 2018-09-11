@@ -1,0 +1,3 @@
+---
+- include_tasks: builddbimage.yml
+- include_tasks: buildmwimage.yml

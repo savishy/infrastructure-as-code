@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{kube_mw_db_service}}
+subsets:
+- addresses:
+  - ip: {{mysql_db_host}}
+  ports:
+  - port: 3306
+                      

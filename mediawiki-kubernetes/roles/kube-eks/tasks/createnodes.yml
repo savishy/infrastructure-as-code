@@ -1,0 +1,37 @@
+---
+
+- name: Create worker nodes for the EKS cluster.
+  cloudformation:
+    stack_name: '{{eks_name}}-nodes'
+    state: present
+    region: '{{ec2_region}}'
+    template_body: "{{ lookup('template', 'amazon-eks-nodegroup.yaml') }}"
+    template_parameters:
+      ClusterName: '{{eks_name}}'
+      NodeInstanceType: t2.medium
+      NodeGroupName: '{{eks_name}}-nodegroup'
+      NodeImageId: ami-0b2ae3c6bda8b5c06
+      NodeAutoScalingGroupMinSize: 2
+      NodeAutoScalingGroupMaxSize: 2
+      KeyName: '{{vault_ec2_keypair_name}}'
+      Subnets: "{{eks_vpc_out.stack_outputs.SubnetIds}}"
+      VpcId: '{{eks_vpc_out.stack_outputs.VpcId}}'
+      ClusterControlPlaneSecurityGroup: '{{eks_vpc_out.stack_outputs.SecurityGroups}}'
+  register: eks_node_out
+
+- debug: var=eks_node_out.stack_outputs.NodeInstanceRole
+- name: Send Kubectl config that enables worker nodes to join cluster.
+  template:
+    src: aws-auth-cm.yaml
+    dest: /tmp/aws-auth-cm.yml
+    
+- name: Enable Worker Nodes to join the cluster with kubectl.
+  shell: kubectl apply -f /tmp/aws-auth-cm.yml
+
+- name: Wait until nodes are ready
+  shell: kubectl get nodes
+  register: eks_nodes_status_out
+  until: "'Ready' in eks_nodes_status_out.stdout"
+  retries: 20
+  delay: 30
+  

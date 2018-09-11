@@ -1,0 +1,40 @@
+---
+# Elastic Container Registry Details
+mw_app_name: mwapp
+mw_db_name: mwdb
+mw_app_ver: 1.7
+mw_db_ver: 1.0
+ecr_repo_root: '006475447375.dkr.ecr.us-east-1.amazonaws.com'
+
+ecr_repo_name_app: 'savishy/{{mw_app_name}}'
+ecr_repo_name_db: 'savishy/{{mw_db_name}}'
+ecr_repo_url_app: '{{ecr_repo_root}}/{{ecr_repo_name_app}}'
+ecr_repo_url_db: '{{ecr_repo_root}}/{{ecr_repo_name_db}}'
+
+# AWS region where all resources incl VPC and VMs will reside.
+ec2_region: us-east-1
+
+# usr account for ansible control
+ansible_user: ubuntu
+
+# user account for docker
+docker_user: '{{ansible_user}}'
+docker_api_port: 2375
+
+# db instance is created and added to this ansible group.
+ec2_instance_groups:
+- docker
+- db
+
+# store controller ip
+my_ip: "{{lookup('url','http://ipinfo.io/ip')}}"
+
+# Kubernetes DB Service is called this. Allows kube services to access external services.
+kube_mw_db_service: mwdbexternal
+
+# EKS Cluster Name
+eks_name: mweks
+# Cloud formation stack name
+eks_vpc_stack_name: mw-eks-vpc
+# IAM Role to use for EKS 
+eks_iam_role: 'arn:aws:iam::006475447375:role/eksServiceRole'
