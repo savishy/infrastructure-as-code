@@ -9,3 +9,7 @@ variable azure_client_id {}
 variable azure_client_secret {}
 variable azure_subscription_id {}
 variable azure_tenant_id {}
+variable arm_subscription_id {}
+variable arm_client_id {}
+variable arm_client_secret {}
+variable arm_tenant_id {}

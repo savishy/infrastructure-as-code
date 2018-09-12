@@ -6,6 +6,18 @@ provider "azurerm" {
   tenant_id       = "${var.azure_tenant_id}"
 }
 
+
+# # Remote State Storage for the Kubernetes cluster.
+# # Uses AzureRM Backend created previously.
+
+terraform {
+  backend "azurerm" {
+    resource_group_name = "tfstorage_rg"
+    storage_account_name = "terraformstoragetest"
+    container_name       = "tfstoragecontainer"
+    key                  = "petclinic-kubernetes.tfstate"
+  }
+}
 resource "azurerm_resource_group" "k8s" {
   name     = "${var.rg_name}"
   location = "${var.location}"

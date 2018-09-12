@@ -21,8 +21,36 @@ resource "azurerm_storage_account" "tfstorageaccount" {
 }
 
 resource "azurerm_storage_container" "tfstoragecontainer" {
-  name                  = "tfstoragecontainer"
+  name                  = "${var.tfstoragecontainer_name}"
   resource_group_name   = "${azurerm_resource_group.tfstoragerg.name}"
   storage_account_name  = "${azurerm_storage_account.tfstorageaccount.name}"
   container_access_type = "blob"
+}
+
+data "azurerm_storage_account_sas" "tfsas" {
+    connection_string = "${azurerm_storage_account.tfstorageaccount.primary_connection_string}"
+    https_only        = true
+    resource_types {
+        service   = true
+        container = false
+        object    = false
+    }
+    services {
+        blob  = true
+        queue = false
+        table = false
+        file  = false
+    }
+    start   = "2018-09-10"
+    expiry  = "2035-03-21"
+    permissions {
+        read    = true
+        write   = true
+        delete  = true
+        list    = true
+        add     = true
+        create  = true
+        update  = true
+        process = true
+    }
 }
