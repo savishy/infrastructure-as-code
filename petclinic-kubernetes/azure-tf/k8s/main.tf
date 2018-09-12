@@ -7,17 +7,6 @@ provider "azurerm" {
 }
 
 
-# # Remote State Storage for the Kubernetes cluster.
-# # Uses AzureRM Backend created previously.
-
-terraform {
-  backend "azurerm" {
-    resource_group_name = "tfstorage_rg"
-    storage_account_name = "terraformstoragetest"
-    container_name       = "tfstoragecontainer"
-    key                  = "petclinic-kubernetes.tfstate"
-  }
-}
 resource "azurerm_resource_group" "k8s" {
   name     = "${var.rg_name}"
   location = "${var.location}"
@@ -40,7 +29,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   agent_pool_profile {
     name            = "default"
     count           = "${var.agent_count}"
-    vm_size         = "Standard_B2s"
+    vm_size         = "${var.agent_size}"
     os_type         = "Linux"
     os_disk_size_gb = 30
   }

@@ -24,3 +24,4 @@ Next you can run the usual flow of `terraform init | plan | apply`.
 ## References
 
 1. https://www.hashicorp.com/blog/kubernetes-cluster-with-aks-and-terraform
+1. https://www.terraform.io/docs/backends/types/azurerm.html

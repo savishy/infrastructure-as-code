@@ -1,0 +1,1 @@
+export ARM_ACCESS_KEY='t4KNFnmGhkZUr3YcKfdMtReM11+X3m1zpvPYvOorMar3GNrLCYl/mvmx0bgNYzGGaiqXUidWhgy0cSZBWxPxUw=='
