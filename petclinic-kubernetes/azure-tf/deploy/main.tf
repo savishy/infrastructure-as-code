@@ -3,14 +3,15 @@
 
 provider "kubernetes" {
   host     = "${var.host}"
-  username = "${var.username}"
-  password = "${var.password}"
-
+  #username = "${var.username}"
+  #password = "${var.password}"
+  config_context_cluster = "${var.cluster_name}"
   client_certificate     = "${base64decode(var.client_certificate)}"
   client_key             = "${base64decode(var.client_key)}"
   cluster_ca_certificate = "${base64decode(var.cluster_ca_certificate)}"
 }
 
+# Create a replicationcontroller.
 resource "kubernetes_replication_controller" "petclinicrc" {
   metadata {
     name = "petclinicrc"
@@ -43,6 +44,7 @@ resource "kubernetes_replication_controller" "petclinicrc" {
     }
   }
 }
+# Create a service.
 resource "kubernetes_service" "petclinicservice" {
   metadata {
     name = "petclinicservice"
@@ -66,4 +68,18 @@ resource "kubernetes_service" "petclinicservice" {
   }
 }
 
+# Create an autoscaler for the rc.
 
+resource "kubernetes_horizontal_pod_autoscaler" "petclinicscaler" {
+  metadata {
+    name = "petclinicscaler"
+  }
+  spec {
+    max_replicas = 5
+    min_replicas = 2
+    scale_target_ref {
+      kind = "ReplicationController"
+      name = "petclinicrc"
+    }
+  }
+}
