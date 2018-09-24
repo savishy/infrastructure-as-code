@@ -1,0 +1,3 @@
+# This file seems to be required if this has to be tied to AWX or Ansible Tower: 
+# https://docs.ansible.com/ansible-tower/2.4.1/html/userguide/projects.html#ansible-galaxy-support
+- src: http://github.com/savishy/ansible-roles
