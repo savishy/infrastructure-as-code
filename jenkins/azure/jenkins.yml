@@ -1,6 +1,12 @@
 - hosts: localhost
   connection: local
   vars:
+    use_azure: true
+    use_sshkey_auth: true
+    ssh_key_path: ~/.ssh/id_rsa
+    rg_name: jenkins
+    vm_name: jenkins
+    location: eastus
     vm_groups:
     - jenkins
   roles:
@@ -12,6 +18,6 @@
 - hosts: jenkins
   roles:
     - { role: geerlingguy.java, become: true }
-    - { role: geerlingguy.jenkins, become: true }
-    - { role: geerlingguy.docker, become: true }
+    - { role: ansible-roles/install-docker, become: true }
+    - { role: ansible-roles/jenkins, become: true }
     - { role: registry, become: true }
