@@ -6,6 +6,9 @@
     ssh_key_path: ~/.ssh/id_rsa
     rg_name: jenkins
     vm_name: jenkins
+    vm_vnet_name: vnet0
+    vm_vnet_rg_name: vnets
+    vm_subnet_name: subnet0
     location: eastus
     vm_groups:
     - jenkins

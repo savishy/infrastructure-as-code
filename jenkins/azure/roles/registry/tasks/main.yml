@@ -1,16 +1,8 @@
 ---
-- name: ensure python pip is installed.
-  package:
-    name: python-pip
-    state: present
 
-- name: ensure prerequisite Pip packages are present.
-  pip:
-    name: '{{item}}'
-    state: present
-  with_items:
-  - 'pyOpenSSL'
-  - 'docker-py'
+- include_role: 
+    name: common
+    tasks_from: validate-docker-prereqs
 
 # Use self signed certs for Docker Registry
 # https://docs.docker.com/registry/insecure/#use-self-signed-certificates
