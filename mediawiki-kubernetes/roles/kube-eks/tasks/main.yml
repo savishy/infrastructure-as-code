@@ -1,0 +1,11 @@
+---
+
+# TODO IAM Role must be created prior to this role. Can be automated.
+# Guide https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
+# https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-vpc-sample    
+
+- include_tasks: createvpc.yml
+- include_tasks: createcluster.yml
+- include_tasks: configurekube.yml  
+- include_tasks: createdashboard.yml
+- include_tasks: createnodes.yml

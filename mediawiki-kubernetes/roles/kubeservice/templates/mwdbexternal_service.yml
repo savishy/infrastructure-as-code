@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{kube_mw_db_service}}
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306

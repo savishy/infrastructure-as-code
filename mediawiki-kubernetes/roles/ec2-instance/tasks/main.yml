@@ -1,0 +1,53 @@
+---
+
+- name: Retrieve facts about SG for Kubernetes Nodes.
+  ec2_group_facts:
+    filters:
+      group-name: '{{eks_name}}-nodes*'
+      "tag:aws:cloudformation:stack-name": "{{eks_name}}-nodes"
+  register: eks_node_sg_facts
+- set_fact: eks_node_sg_id={{eks_node_sg_facts.security_groups[0].group_id}}
+
+
+- name: Ensure SG {{ec2_group_id}} has rules to allow SSH from controller IP and allows outbound traffic.
+  include_role:
+    name: common
+    tasks_from: update-sg-rules
+  vars:    
+    ec2_group_inbound_rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: '{{my_ip}}/32'
+        rule_desc: Allow SSH from Controller
+      - proto: tcp
+        from_port: 3306
+        to_port: 3306
+        group_id: '{{eks_node_sg_id}}'
+        rule_desc: Allow MySQL Connections from Node SG
+    ec2_group_outbound_rules:
+      - proto: all
+        from_port: 65535
+        to_port: 65535
+        cidr_ip: '0.0.0.0/0'
+        rule_desc: Allow outgoing traffic
+
+- block:
+    - name: get EC2 AMI ID
+      ec2_ami_facts:
+        owner: "{{ec2_ubuntu_owner}}"
+        region: "{{ec2_region}}"
+        filters:
+          architecture: x86_64
+          name: '{{ec2_ubuntu_ami_name}}'
+      register: ec2_ami_details
+    - set_fact: ec2_ami_id={{ec2_ami_details.images[0].image_id}}
+    - debug: var=ec2_ami_id
+  tags: ami
+
+- include_tasks: createinstance.yml vm_name={{item.key}} vm_details={{item.value}}
+  with_dict: "{{vms}}"
+  tags: instance
+
+- name: Retrieve the IP for MySQL instance.
+  set_fact: mysql_db_host={{ec2_created_details.instances[0].public_ip}}

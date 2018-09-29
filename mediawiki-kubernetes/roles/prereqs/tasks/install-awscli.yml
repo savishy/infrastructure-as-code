@@ -1,0 +1,24 @@
+---
+# ensure prereqs on localhost
+# Note: we need AWS CLI 1.16+ available through Pip. Older versions do not have the --no-include-email flag and would break automation.
+
+- block:
+  - name: ensure pip is installed on localhost
+    apt:
+      name: python-pip
+      state: present
+  - name: ensure pip packages including AWS CLI are installed on localhost
+    pip:
+      name: "{{item}}"
+      state: present
+    with_items:
+    - boto
+    - boto3
+    - awscli
+
+  - name: include a role to generate ECR login token.
+    include_role:
+      name: common
+      tasks_from: generate-ecr-login
+  delegate_to: localhost
+  become: true

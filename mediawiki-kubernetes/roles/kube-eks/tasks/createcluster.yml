@@ -1,0 +1,18 @@
+- name: Check whether EKS Cluster is present.
+  shell: aws eks describe-cluster --name {{eks_name}} --region {{ec2_region}}
+  ignore_errors: yes
+  changed_when: false
+  register: eks_cluster_details
+
+- name: Create EKS if cluster is absent.
+  shell: |
+    aws eks create-cluster --region {{ec2_region}} --name {{eks_name}} --role-arn {{eks_iam_role}} \
+    --resources-vpc-config subnetIds={{eks_vpc_out.stack_outputs.SubnetIds}},securityGroupIds={{eks_vpc_out.stack_outputs.SecurityGroups}}
+  when: eks_cluster_details is failed
+
+- name: Get EKS Cluster state. It usually takes about 10 minutes to become ACTIVE.
+  shell: aws eks describe-cluster --name {{eks_name}} --region {{ec2_region}} --query 'cluster.status'
+  register: eks_cluster_details
+  retries: 20
+  delay: 30
+  until: "'ACTIVE' in eks_cluster_details.stdout"

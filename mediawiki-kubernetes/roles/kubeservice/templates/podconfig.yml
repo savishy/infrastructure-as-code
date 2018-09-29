@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: '{{kube_deployment}}'
+spec:
+  containers:
+  - name: '{{kube_container}}'
+    image: '{{ecr_repo_name_app}}:{{mw_app_ver}}'
+  imagePullSecrets:
+  - name: '{{kube_secret}}'
