@@ -15,5 +15,6 @@
 - name: provision prometheus and grafana.
   hosts: monitoring
   roles:
+  - { role: ansible-roles/install-docker }
   - prometheus-grafana
   tags: prom

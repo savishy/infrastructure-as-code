@@ -6,45 +6,56 @@
     state: directory
   register: tempdir
 
+- name: Change permissions.
+  file:
+    name: '{{tempdir.path}}'
+    state: directory
+    mode: 0777
+
 - name: Template out Prometheus Dockerfile to {{tempdir.path}}
   template:
     src: Dockerfile_prometheus
     dest: '{{tempdir.path}}'
+    mode: 0777
 
 - name: Template out Prometheus Config to {{tempdir.path}}
   template:
     src: prometheus.yml
     dest: '{{tempdir.path}}'
+    mode: 0777
 
-- name: Build Prometheus Docker Image.
-  docker_image:
-    path: '{{tempdir.path}}'
-    dockerfile: Dockerfile_prometheus
-    name: prometheus_img
+- block:
+  - name: Build Prometheus Docker Image.
+    docker_image:
+      path: '{{tempdir.path}}'
+      dockerfile: Dockerfile_prometheus
+      name: prometheus_img
 
-- name: Create a network
-  docker_network:
-    name: '{{mon_docker_network_name}}'
+  - name: Create a network
+    docker_network:
+      name: '{{mon_docker_network_name}}'
 
-- name: Create Prometheus Container
-  docker_container:
-    name: prometheus_container
-    image: prometheus_img
-    state: started
-    ports:
-     - "{{prom_port}}:{{prom_port}}"
-    networks:
-    - name: '{{mon_docker_network_name}}'
+  - name: Create Prometheus Container
+    docker_container:
+      name: prometheus_container
+      image: prometheus_img
+      state: started
+      ports:
+       - "{{prom_port}}:{{prom_port}}"
+      networks:
+      - name: '{{mon_docker_network_name}}'
 
-- name: Create Grafana Container
-  docker_container:
-    name: grafana_container
-    image: 'grafana/grafana:{{grafana_version}}'
-    state: started
-    ports:
-     - "{{grafana_port}}:{{grafana_port}}"
-    networks:
-    - name: '{{mon_docker_network_name}}'
+  - name: Create Grafana Container
+    docker_container:
+      name: grafana_container
+      image: 'grafana/grafana:{{grafana_version}}'
+      state: started
+      ports:
+       - "{{grafana_port}}:{{grafana_port}}"
+      networks:
+      - name: '{{mon_docker_network_name}}'
+  become: yes
+  become_user: docker
 
 - uri:
     url: '{{grafana_api_root}}/datasources'

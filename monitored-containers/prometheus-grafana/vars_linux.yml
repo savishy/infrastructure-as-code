@@ -1,3 +1,45 @@
 ---
+# ansible-roles/updateinventory
 vm_groups:
 - monitoring
+use_azure: true
+use_sshkey_auth: true
+ssh_key_path: ~/.ssh/id_rsa
+
+# ansible-roles/azure-vnets
+azure_vnet_type: type1
+
+# ansible-roles/azurevm
+
+# NSG Rules for VM.
+vm_nsg_rules:
+- name: 'SSH'
+  protocol: Tcp
+  source_address_prefix: '{{ansible_machine_ip}}/32'
+  destination_port_range: 22
+  access: Allow
+  priority: 101
+  direction: Inbound
+- name: 'HTTP_80'
+  protocol: Tcp
+  source_address_prefix: '{{ansible_machine_ip}}/32'
+  destination_port_range: 80
+  access: Allow
+  priority: 111
+  direction: Inbound
+- name: 'HTTP_8080'
+  protocol: Tcp
+  source_address_prefix: '{{ansible_machine_ip}}/32'
+  destination_port_range: 8080
+  access: Allow
+  priority: 131
+  direction: Inbound
+- name: 'Prometheus-Grafana'
+  protocol: Tcp
+  source_address_prefix: '{{ansible_machine_ip}}/32'
+  destination_port_range:
+  - 9090
+  - 3000
+  access: Allow
+  priority: 141
+  direction: Inbound
