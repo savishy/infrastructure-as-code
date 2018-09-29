@@ -14,7 +14,7 @@
 
 - name: Include task to execute ECR Login.
   include_role:
-    name: common
+    name: ansible-roles/common
     tasks_from: ecr-login
 
 - name: Build a MySQL DB Docker Image with MediaWiki DB initialization and push to ECR.

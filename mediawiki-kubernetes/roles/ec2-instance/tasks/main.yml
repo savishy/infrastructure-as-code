@@ -11,7 +11,7 @@
 
 - name: Ensure SG {{ec2_group_id}} has rules to allow SSH from controller IP and allows outbound traffic.
   include_role:
-    name: common
+    name: ansible-roles/common
     tasks_from: update-sg-rules
   vars:    
     ec2_group_inbound_rules:

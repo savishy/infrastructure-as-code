@@ -1,7 +1,7 @@
 ---
 - name: Include task to login to ECR.
   include_role:
-    name: common
+    name: ansible-roles/common
     tasks_from: ecr-login
 - name: Create a DB Docker container which initializes the MediaWiki DB.
   docker_container:

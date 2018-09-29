@@ -18,7 +18,7 @@
 
   - name: include a role to generate ECR login token.
     include_role:
-      name: common
+      name: ansible-roles/common
       tasks_from: generate-ecr-login
   delegate_to: localhost
   become: true

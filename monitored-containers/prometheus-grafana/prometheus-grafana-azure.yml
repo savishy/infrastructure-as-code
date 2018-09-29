@@ -4,6 +4,7 @@
   vars_files:
   - vars_linux.yml
   roles:
+  - { role: ansible-roles/azure-vnet }
   - { role: ansible-roles/azurevm }
   - { role: ansible-roles/updateinventory, tags: always }
 
@@ -16,4 +17,3 @@
   roles:
   - prometheus-grafana
   tags: prom
-
