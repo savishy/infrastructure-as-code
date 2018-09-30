@@ -1,0 +1,11 @@
+- name: Provision Prometheus and Grafana containers locally.
+  hosts: localhost
+  connection: local
+  vars_files:
+  - vars_linux.yml
+  pre_tasks:
+  - local_action: command ansible-galaxy install -r requirements.yml --force
+  roles:
+  - ansible-roles/install-docker
+  - prometheus-grafana
+  tags: prom
